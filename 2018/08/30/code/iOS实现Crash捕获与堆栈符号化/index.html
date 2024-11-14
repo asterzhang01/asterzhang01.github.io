@@ -1,0 +1,649 @@
+
+<!DOCTYPE html><html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 6.3.0">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>iOS实现Crash捕获与堆栈符号化 - Aster's Blog</title>
+
+  
+    <meta name="description" content="在应用程序开发过程中，最棘手的问题莫过于crash。已经上线的crash无法看到崩溃现场，只能通过crash日志进行定位分析。通常情况下，可以使用苹果自带的crash log或者第三方的crash组件进行crash捕获。但是在一些场景下，需要我们手动实现crash捕获与符号化，比如开发SDK。 Crash捕获iOS端的crash分为两类，一类是NSException异常，另外一类是Signal信号">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS实现Crash捕获与堆栈符号化">
+<meta property="og:url" content="http://asterzhang.com/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/index.html">
+<meta property="og:site_name" content="Aster&#39;s Blog">
+<meta property="og:description" content="在应用程序开发过程中，最棘手的问题莫过于crash。已经上线的crash无法看到崩溃现场，只能通过crash日志进行定位分析。通常情况下，可以使用苹果自带的crash log或者第三方的crash组件进行crash捕获。但是在一些场景下，需要我们手动实现crash捕获与符号化，比如开发SDK。 Crash捕获iOS端的crash分为两类，一类是NSException异常，另外一类是Signal信号">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190223864.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190227482.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190232502.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190236441.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190239303.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108190244655.png">
+<meta property="article:published_time" content="2018-08-30T05:09:00.000Z">
+<meta property="article:modified_time" content="2024-11-14T14:15:03.453Z">
+<meta property="article:author" content="Aster Zhang">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://asterzhang.com/attachments/1240-20220108190223864.png">
+  
+  
+  
+  <meta name="keywords" content="iOS">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
+  
+
+  
+
+  
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avatar.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Aster's Blog</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="站内搜索"></form><div id="search-result"></div><div class="search-no-result">没有找到内容！</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/"><span class="title">生命以负熵为食</span></a><a class="item title" href="/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/"><span class="title">macOS采集/录制系统音频数据</span></a><a class="item title" href="/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/"><span class="title">iOS实现Crash捕获与堆栈符号化</span></a><a class="item title" href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/"><span class="title">mp4文件格式重点解析</span></a><a class="item title" href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"><span class="title">使用智能指针管理对象生命周期</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/code/">code</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2018-08-30T05:09:00.000Z">2018-08-30</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-11-14T14:15:03.453Z">2024-11-14</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>iOS实现Crash捕获与堆栈符号化</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>在应用程序开发过程中，最棘手的问题莫过于crash。已经上线的crash无法看到崩溃现场，只能通过crash日志进行定位分析。通常情况下，可以使用苹果自带的crash log或者第三方的crash组件进行crash捕获。但是在一些场景下，需要我们手动实现crash捕获与符号化，比如开发SDK。</p>
+<h1 id="Crash捕获"><a href="#Crash捕获" class="headerlink" title="Crash捕获"></a>Crash捕获</h1><p>iOS端的crash分为两类，一类是NSException异常，另外一类是Signal信号异常。这两类异常我们都可以通过注册相关函数来捕获，但是值得注意的是一个应用中如果注册了多个crash收集组件，必然会存在冲突问题。这个时候，我们需要在注册之前判断是否已经注册过handler，如果有注册过，需要把之前注册的handler函数指针保存，待处理完crash后，再把对应的handler抛出去。</p>
+<h2 id="1-NSException异常捕获"><a href="#1-NSException异常捕获" class="headerlink" title="1. NSException异常捕获"></a>1. NSException异常捕获</h2><p>NSException异常是OC代码导致的crash，我们可以先调用NSGetUncaughtExceptionHandler获取之前注册的handler，如果有就保存起来，再通过NSSetUncaughtExceptionHandler方法注册自己的handler：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void RegisterExceptionHandler() &#123;</span><br><span class="line">    if(NSGetUncaughtExceptionHandler() != MyExceptionHandler) &#123;</span><br><span class="line">        OldHandler = NSGetUncaughtExceptionHandler();</span><br><span class="line">    &#125;</span><br><span class="line">    NSSetUncaughtExceptionHandler(&amp;MyExceptionHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>处理完成后再调用保存的handler，抛出异常：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">void MyExceptionHandler(NSException *exception) &#123;</span><br><span class="line"></span><br><span class="line">   // do something...</span><br><span class="line"></span><br><span class="line">    // 调用之前已经注册的handler</span><br><span class="line">    if(OldHandler) &#123;</span><br><span class="line">        OldHandler(exception);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-Signal信号捕获"><a href="#2-Signal信号捕获" class="headerlink" title="2. Signal信号捕获"></a>2. Signal信号捕获</h2><p>Signal信号是由iOS底层mach信号异常转换后以signal信号抛出的异常。既然是兼容posix标准的异常，我们同样可以通过sigaction函数注册对应的信号。<br>因为signal信号有很多，有些信号在iOS应用中也不会产生，我们只需要注册常见的几类信号：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SIGILL	4	非法指令	  执行了非法指令. 通常是因为可执行文件本身出现错误, 或者试图执行数据段. 堆栈溢出时也有可能产生这个信号.</span><br><span class="line">SIGABRT	6	调用abort    程序自己发现错误并调用abort时产生,一些C库函数中，如strlen</span><br><span class="line">SIGSFPE	8	浮点运算错误  如除0操作</span><br><span class="line">SIGSEGV	11	段非法错误	 试图访问未分配给自己的内存, 或试图往没有写权限的内存地址写数据,空指针，数组越界，栈溢出等</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>下面我们注册一个SIGABRT信号，在注册handler之前，需要保存之前注册的hander:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">void RegisterSignalHandler() &#123;</span><br><span class="line">    struct sigaction old_action;</span><br><span class="line">    sigaction(SIGABRT, NULL, &amp;old_action);</span><br><span class="line">    if (old_action.sa_flags &amp; SA_SIGINFO) &#123;</span><br><span class="line">        SignalHandlerFunc handler = (SignalHandlerFunc)old_action.sa_sigaction;</span><br><span class="line">        if (handler != MySignalHandler) &#123;</span><br><span class="line">            // 保存OldAbrtSignalHandler</span><br><span class="line">            OldAbrtSignalHandler = handler;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 注册MySignalHandler</span><br><span class="line">    struct sigaction action;</span><br><span class="line">    action.sa_sigaction = MySignalHandler;</span><br><span class="line">    action.sa_flags = SA_NODEFER | SA_SIGINFO;</span><br><span class="line">    sigemptyset(&amp;action.sa_mask);</span><br><span class="line">    sigaction(signal, &amp;action, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>处理完成后，同样抛出handler:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">static void MySignalHandler(int signal, siginfo_t* info, void* context) &#123;</span><br><span class="line">    </span><br><span class="line">    // do something...</span><br><span class="line">    </span><br><span class="line">    // 处理前者注册的 handler</span><br><span class="line">    if (signal == SIGABRT) &#123;</span><br><span class="line">        if (OldAbrtSignalHandler) &#123;</span><br><span class="line">            OldAbrtSignalHandler(signal, info, context);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="收集调用堆栈"><a href="#收集调用堆栈" class="headerlink" title="收集调用堆栈"></a>收集调用堆栈</h1><p>调用堆栈的收集我们可以利用系统api，也可以参考PLCrashRepoter等第三方实现获取所有线程堆栈。使用系统api关键代码如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">NSMutableString *text = [NSMutableString string];</span><br><span class="line">        void* callstack[128];</span><br><span class="line">        int i, frames = backtrace(callstack, 128);</span><br><span class="line">        char** strs = backtrace_symbols(callstack, frames);</span><br><span class="line">        for (i = 0; i &lt; frames; ++i) &#123;</span><br><span class="line">            [text appendFormat:@&quot;%@\n&quot;, [NSString stringWithCString:strs[i] encoding:NSUTF8StringEncoding]];</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="堆栈符号化"><a href="#堆栈符号化" class="headerlink" title="堆栈符号化"></a>堆栈符号化</h1><p>通过系统api获取的堆栈信息可能只是一串内存地址，很难从中获取有用的信息协助排查问题，因此，需要对堆栈信息符号化。<br>符号化的思路是找到当前应用对于的dsym符号表文件，利用dwarfdump，atos等工具还原crash堆栈内存地址对应的符号名。需要注意如果应用中使用了自己或第三方的动态库，应用崩溃在动态库Image而不是主程序Image中，我们需要有对应动态库的dsym符号表才能符号化。<br>思路明确之后，接下来面临的是两个问题。一个问题是如何把当前crash的应用和dsym符号表对应上。另一个问题是如何通过内存地址符号化。在解决这两个问题之前，我们需要先了解可执行文件的二进制格式和加载过程。</p>
+<h2 id="1-Mach-O文件格式"><a href="#1-Mach-O文件格式" class="headerlink" title="1. Mach-O文件格式"></a>1. Mach-O文件格式</h2><p>不同操作系统都会定义不同的可执行文件格式。如Linux平台的ELF格式，Windows平台的PE格式，iOS的可执行文件格式被称作Mach-O。可执行文件，动态库，dsym文件都是这种文件格式。<br>下图是官方的Mach-O格式结构：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190223864.png" alt="Mach-O文件格式"><br>可以看到，Mach-O文件分为三部分。<br>第一部分是header，hander定义了文件的基本信息，包括文件大小，文件类型，使用的平台等信息。我们可以从loader.h头文件中找到相关定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line"> * The 64-bit mach header appears at the very beginning of object files for</span><br><span class="line"> * 64-bit architectures.</span><br><span class="line"> */</span><br><span class="line">struct mach_header_64 &#123;</span><br><span class="line">    uint32_t    magic;      /* mach magic number identifier */</span><br><span class="line">    cpu_type_t  cputype;    /* cpu specifier */</span><br><span class="line">    cpu_subtype_t   cpusubtype; /* machine specifier */</span><br><span class="line">    uint32_t    filetype;   /* type of file */</span><br><span class="line">    uint32_t    ncmds;      /* number of load commands */</span><br><span class="line">    uint32_t    sizeofcmds; /* the size of all the load commands */</span><br><span class="line">    uint32_t    flags;      /* flags */</span><br><span class="line">    uint32_t    reserved;   /* reserved */</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>其次是load commands，这一部分定义了详细的加载指令，指明如何加载到内存。从头文件定义可以看到，基础的load_command结构体只包含了cmd以及cmdsize，通过cmd类型，可以转义成不同类型的load command 结构体：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct load_command &#123;</span><br><span class="line">	uint32_t cmd;		/* type of load command */</span><br><span class="line">	uint32_t cmdsize;	/* total size of command in bytes */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>最后的数据部分，包括了代码段，数据段，符号表等具体的二进制数据。<br>我们可以用otool查看二进制文件的具体内容，更直观的，可以用Mach-O View来浏览可执行文件的具体内容。<br>下图是一个可执行文件与其所对于的符号表文件。可执行文件的load command比较多，里面包含了有代码段，数据段，函数入口，加载动态库等指令。其中的LC_UUID字段和符号表中的LC_UUID是完全对应的，也就是说，可以通过UUID字段匹配可执行文件和dsym符号表。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190227482.png" alt="可执行文件"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190232502.png" alt="符号表文件"></p>
+<h2 id="2-可执行文件加载过程"><a href="#2-可执行文件加载过程" class="headerlink" title="2. 可执行文件加载过程"></a>2. 可执行文件加载过程</h2><p>一个iOS应用的加载过程是这样的，首先，由内核加载可执行文件（Mach-O），并从中获得dyld的路径。然后加载dyld，由dyld接管动态库加载，符号绑定等工作，runtime的初始化工作也在这一阶段进行。最后dyld调用main函数，这样便来到了main函数入口。<br>在这个过程中，操作系统为了安全考虑，使用了ASLR技术。地址空间布局随机化(Address space layout randomization)，就是每次应用加载时，使用随机的一个地址空间,这样能有效防止被攻击。VM Address是编译后Image的起始位置，Load Address是在运行时加载到虚拟内存的起始位置，Slide是加载到内存的偏移，这个偏移值是一个随机值，每次运行都不相同，有下面公式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Load Address = VM Address + Slide</span><br></pre></td></tr></table></figure>
+
+<p>由于dsym符号表是编译时生成的地址，crash堆栈的地址是运行时地址，这个时候需要经过转换才能正确的符号化。 crash日志里的符号地址被称为Stack Address，而编译后的符号地址被称为Symbol Address，他们之间的关系如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Stack Address = Symbol Address + Slide</span><br></pre></td></tr></table></figure>
+
+<p>符号化就是通过Symbol Address到dsym文件中寻找对应符号信息的过程。</p>
+<h2 id="3-获取Binary-Images信息"><a href="#3-获取Binary-Images信息" class="headerlink" title="3. 获取Binary Images信息"></a>3. 获取Binary Images信息</h2><p>我们在demo的viewDidLoad方法中调用abort方法制造一个crash。仔细观察一下系统采集到的crash日志，报错地址Stack Address位于0x1046eea14，相对Load Address 0x1046e8000偏移了27156。这里的27156并不是ASLR的随机偏移Slide，而是符号相对位置offset(Symbol Address - VM Address)：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190236441.png" alt="报错堆栈"><br>再观察crash日志最后，有一栏Binary Images，记录了所有加载image的UUID和加载的Load Address：<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190239303.png" alt="Binary Images"><br>根据前文提到的UUID对应关系以及Load Address和Symbol Address的转换关系，只要能获取Binary Images信息，就可以实现符号化。<br>UUID存放在Mach-O的load command中，对应uuid_command结构体的uuid字段，可以通过遍历所有load command获取。<br>Slide偏移可以通过image_dyld_get_image_vmaddr_slide方法遍历所有Image获取。<br>VM Address也存放在load command中，对应segment_command结构体的vmaddr字段，需要注意segment_command存在多种类型以及需要区分32位和64位应用的细微差别。<br>解析代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">for (uint32_t i = 0; i &lt; _dyld_image_count(); i++) &#123;</span><br><span class="line">        uint64_t vmbase = 0;</span><br><span class="line">        uint64_t vmslide = 0;</span><br><span class="line">        uint64_t vmsize = 0;</span><br><span class="line">        </span><br><span class="line">        uint64_t loadAddress = 0;</span><br><span class="line">        uint64_t loadEndAddress = 0;</span><br><span class="line">        NSString *imageName = @&quot;&quot;;</span><br><span class="line">        NSString *uuid;</span><br><span class="line">        </span><br><span class="line">        const struct mach_header *header = _dyld_get_image_header(i);</span><br><span class="line">        const char *name = _dyld_get_image_name(i);</span><br><span class="line">        vmslide = (i);</span><br><span class="line">        imageName = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];</span><br><span class="line">        BOOL is64bit = header-&gt;magic == MH_MAGIC_64 || header-&gt;magic == MH_CIGAM_64;</span><br><span class="line">        uintptr_t cursor = (uintptr_t)header + (is64bit ? sizeof(struct mach_header_64) : sizeof(struct mach_header));</span><br><span class="line">        struct load_command *loadCommand = NULL;</span><br><span class="line">        for (uint32_t i = 0; i &lt; header-&gt;ncmds; i++, cursor += loadCommand-&gt;cmdsize) &#123;</span><br><span class="line">            loadCommand = (struct load_command *)cursor;</span><br><span class="line">            if(loadCommand-&gt;cmd == LC_SEGMENT) &#123;</span><br><span class="line">                const struct segment_command* segmentCommand = (struct segment_command*)loadCommand;</span><br><span class="line">                if (strcmp(segmentCommand-&gt;segname, SEG_TEXT) == 0) &#123;</span><br><span class="line">                    vmsize = segmentCommand-&gt;vmsize;</span><br><span class="line">                    vmbase = segmentCommand-&gt;vmaddr;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; else if(loadCommand-&gt;cmd == LC_SEGMENT_64) &#123;</span><br><span class="line">                const struct segment_command_64* segmentCommand = (struct segment_command_64*)loadCommand;</span><br><span class="line">                 if (strcmp(segmentCommand-&gt;segname, SEG_TEXT) == 0) &#123;</span><br><span class="line">                    vmsize = segmentCommand-&gt;vmsize;</span><br><span class="line">                    vmbase = (uintptr_t)(segmentCommand-&gt;vmaddr);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            else if (loadCommand-&gt;cmd == LC_UUID) &#123;</span><br><span class="line">                const struct uuid_command *uuidCommand = (const struct uuid_command *)loadCommand;</span><br><span class="line">                NSString *uuidString = [[[NSUUID alloc] initWithUUIDBytes:uuidCommand-&gt;uuid] UUIDString];</span><br><span class="line">                uuid = [[uuidString stringByReplacingOccurrencesOfString:@&quot;-&quot; withString:@&quot;&quot;] lowercaseString];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        loadAddress = vmbase + vmslide;</span><br><span class="line">        loadEndAddress = loadAddress + vmsize - 1;</span><br><span class="line">    &#125;</span><br><span class="line">  // do something...</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-符号化"><a href="#4-符号化" class="headerlink" title="4. 符号化"></a>4. 符号化</h2><p>通过上述代码，我们可以采集到和系统一样的crash日志。接下来，可以使用dwarfdump和atos进行符号化。</p>
+<h3 id="4-1-dwarfdump"><a href="#4-1-dwarfdump" class="headerlink" title="4.1 dwarfdump"></a>4.1 dwarfdump</h3><p>拿到crash日志后，我们要先确定dsym文件是否匹配。可以使用dwarfdump –uuid命令查看dsym文件所有架构的UUID:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ dwarfdump --uuid mytest.app.dSYM </span><br><span class="line">UUID: B4217D5B-0349-3D9F-9D70-BC7DD60DA121 (armv7) mytest.app.dSYM/Contents/Resources/DWARF/mytest</span><br><span class="line">UUID: A52E3452-C2EF-3291-AE37-9392EDCCE572 (arm64) mytest.app.dSYM/Contents/Resources/DWARF/mytest</span><br></pre></td></tr></table></figure>
+
+<p>可以看到dsym文件的arm64架构中包含的A52E3452-C2EF-3291-AE37-9392EDCCE572和Binary Images中的UUID是相匹配的。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108190244655.png" alt="UUID"><br>下面就可以用dwarfdump –lookup命令对报错堆栈符号化，格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dwarfdump --arch [arch type] --lookup [Symbol Address] [dsym file path]</span><br></pre></td></tr></table></figure>
+
+<p>对于报错堆栈的Stack Address 0x1046eea14，需要进行一个转换。已知VM Address为0x100000000，Load Address为0x1046e8000，可以得到Slide为0x46e8000。通过公式Symbol Address &#x3D; Stack Address - Slider求得Symbol Address为0x100006a14，输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">$ dwarfdump --arch arm64 --lookup 0x100006a14 mytest.app.dSYM </span><br><span class="line">----------------------------------------------------------------------</span><br><span class="line"> File: mytest.app.dSYM/Contents/Resources/DWARF/mytest (arm64)</span><br><span class="line">----------------------------------------------------------------------</span><br><span class="line">Looking up address: 0x0000000100006a14 in .debug_info... found!</span><br><span class="line"></span><br><span class="line">0x0003ebb7: Compile Unit: length = 0x000000d4  version = 0x0004  abbr_offset = 0x00000000  addr_size = 0x08  (next CU at 0x0003ec8f)</span><br><span class="line"></span><br><span class="line">0x0003ebc2: TAG_compile_unit [120] *</span><br><span class="line">             AT_producer( &quot;Apple LLVM version 9.1.0 (clang-902.0.39.2)&quot; )</span><br><span class="line">             AT_language( DW_LANG_ObjC )</span><br><span class="line">             AT_name( &quot;/Users/worthyzhang/Desktop/mytest/mytest/ViewController.m&quot; )</span><br><span class="line">             AT_stmt_list( 0x00009151 )</span><br><span class="line">             AT_comp_dir( &quot;/Users/worthyzhang/Desktop/mytest&quot; )</span><br><span class="line">             AT_APPLE_optimized( true )</span><br><span class="line">             AT_APPLE_major_runtime_vers( 0x02 )</span><br><span class="line">             AT_low_pc( 0x00000001000069bc )</span><br><span class="line">             AT_high_pc( 0x000000a4 )</span><br><span class="line"></span><br><span class="line">0x0003ebf9:     TAG_subprogram [122] *</span><br><span class="line">                 AT_low_pc( 0x00000001000069bc )</span><br><span class="line">                 AT_high_pc( 0x00000070 )</span><br><span class="line">                 AT_frame_base( reg29 )</span><br><span class="line">                 AT_object_pointer( &#123;0x0003ec12&#125; )</span><br><span class="line">                 AT_name( &quot;-[ViewController viewDidLoad]&quot; )</span><br><span class="line">                 AT_decl_file( &quot;/Users/worthyzhang/Desktop/mytest/mytest/ViewController.m&quot; )</span><br><span class="line">                 AT_decl_line( 17 )</span><br><span class="line">                 AT_prototyped( true )</span><br><span class="line">                 AT_APPLE_optimized( true )</span><br><span class="line">Line table dir : &#x27;/Users/worthyzhang/Desktop/mytest/mytest&#x27;</span><br><span class="line">Line table file: &#x27;ViewController.m&#x27; line 25, column 1 with start address 0x0000000100006a14</span><br><span class="line"></span><br><span class="line">Looking up address: 0x0000000100006a14 in .debug_frame... not found.mp</span><br></pre></td></tr></table></figure>
+
+<p>可以定位到报错所在的函数名[ViewController viewDidLoad]以及文件名，行号等信息。</p>
+<h3 id="4-2-atos"><a href="#4-2-atos" class="headerlink" title="4.2 atos"></a>4.2 atos</h3><p>如果只是简单的获取符号名，可以用atos来符号化，命令格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">atos -o [dsym file path] -l [Load Address] -arch [arch type] [Stack Address]</span><br></pre></td></tr></table></figure>
+
+<p>需要注意这里的dsym file path是dsym文件而不是.dSYM结尾的文件夹，输入命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ atos -o mytest.app.dSYM/Contents/Resources/DWARF/mytest -l 0x1046e8000 --arch arm64 0x1046eea14</span><br><span class="line">-[ViewController viewDidLoad] (in mytest) (ViewController.m:25)</span><br></pre></td></tr></table></figure>
+
+<p>得到结果和dwarfdump是一致的。</p>
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://www.objc.io/issues/6-build-tools/mach-o-executables/">Mach-O Executables</a><br><a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1">Mach-O Programming Topics</a><br><a target="_blank" rel="noopener" href="https://nianxi.net/ios/ios-crash-reporter.html">漫谈iOS Crash收集框架</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/953f0961157a">iOS崩溃堆栈信息的符号化解析</a></p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/">mp4文件格式重点解析</a></div><div class="item" id="next"></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Aster Zhang</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Crash%E6%8D%95%E8%8E%B7"><span class="toc-text">Crash捕获</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-NSException%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7"><span class="toc-text">1. NSException异常捕获</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Signal%E4%BF%A1%E5%8F%B7%E6%8D%95%E8%8E%B7"><span class="toc-text">2. Signal信号捕获</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%94%B6%E9%9B%86%E8%B0%83%E7%94%A8%E5%A0%86%E6%A0%88"><span class="toc-text">收集调用堆栈</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96"><span class="toc-text">堆栈符号化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Mach-O%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="toc-text">1. Mach-O文件格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-text">2. 可执行文件加载过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96Binary-Images%E4%BF%A1%E6%81%AF"><span class="toc-text">3. 获取Binary Images信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AC%A6%E5%8F%B7%E5%8C%96"><span class="toc-text">4. 符号化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-dwarfdump"><span class="toc-text">4.1 dwarfdump</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-atos"><span class="toc-text">4.2 atos</span></a></li></ol></li></ol></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `刚刚`,
+      min: `分钟前`,
+      hour: `小时前`,
+      day: `天前`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `切换到浅色模式`,
+      dark: `切换到深色模式`,
+      auto: `切换到跟随系统配色`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>

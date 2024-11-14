@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
-  <meta name="robots" content="noindex,follow">
+  
   <meta name="generator" content="Hexo 6.3.0">
   <meta http-equiv='x-dns-prefetch-control' content='on' />
   
@@ -17,20 +17,28 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>归档 - Aster's Blog</title>
+  <title>macOS采集/录制系统音频数据 - Aster's Blog</title>
 
   
-    <meta property="og:type" content="website">
-<meta property="og:title" content="归档">
-<meta property="og:url" content="http://asterzhang.com/archives/2024/index.html">
+    <meta name="description" content="PC端音视频相关应用往往会涉及到系统音频采集相关需求。例如音视频通信应用在屏幕共享场景下，用户除了共享屏幕内容之外，往往需要共享音频数据。目前macOS没有系统API可以直接获取输出到播放设备的音频数据，这就需要通过别的办法来采集系统音频。由于macOS开发相关资料较少，完成这个需求也花了点时间，在这里将思路做个分享，希望能帮助到有这方面需求的朋友。 技术背景macOS音频设备管理macOS支持管">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS采集&#x2F;录制系统音频数据">
+<meta property="og:url" content="http://asterzhang.com/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/index.html">
 <meta property="og:site_name" content="Aster&#39;s Blog">
+<meta property="og:description" content="PC端音视频相关应用往往会涉及到系统音频采集相关需求。例如音视频通信应用在屏幕共享场景下，用户除了共享屏幕内容之外，往往需要共享音频数据。目前macOS没有系统API可以直接获取输出到播放设备的音频数据，这就需要通过别的办法来采集系统音频。由于macOS开发相关资料较少，完成这个需求也花了点时间，在这里将思路做个分享，希望能帮助到有这方面需求的朋友。 技术背景macOS音频设备管理macOS支持管">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108191538456.png">
+<meta property="og:image" content="http://asterzhang.com/attachments/1240-20220108191546693.png">
+<meta property="article:published_time" content="2021-02-22T11:14:10.000Z">
+<meta property="article:modified_time" content="2024-11-14T14:15:03.458Z">
 <meta property="article:author" content="Aster Zhang">
+<meta property="article:tag" content="AV">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://asterzhang.com/attachments/1240-20220108191538456.png">
   
   
   
-  
+  <meta name="keywords" content="AV">
 
   <!-- feed -->
   
@@ -45,7 +53,7 @@
 </head>
 <body>
 
-<div class="l_body s:aa index tech" id="start" layout="undefined" ><aside class="l_left"><div class="leftbar-container">
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
 
 
 <header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avatar.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Aster's Blog</div></a></div></header>
@@ -57,21 +65,105 @@
 <nav class="menu dis-select"></nav>
 </div>
 <div class="widgets">
+
+
 <widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/"><span class="title">生命以负熵为食</span></a><a class="item title" href="/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/"><span class="title">macOS采集/录制系统音频数据</span></a><a class="item title" href="/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/"><span class="title">iOS实现Crash捕获与堆栈符号化</span></a><a class="item title" href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/"><span class="title">mp4文件格式重点解析</span></a><a class="item title" href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"><span class="title">使用智能指针管理对象生命周期</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
 
-<header class="header mobile-only"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avatar.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Aster's Blog</div></a></div></header>
-
- 
 
 
-<div class="navbar top"><nav class="post"><a href="/">近期发布</a><a href="/categories">分类</a><a href="/tags">标签</a><a class="active" href="/archives">归档</a></nav></div><div class="post-list archives"><article class="" id="archive"><div class='archive-header h4'>2024</div><div class="archive-list"><a class='post fs14' href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"><time>10-12</time><span>使用智能指针管理对象生命周期</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2021</div><div class="archive-list"><a class='post fs14' href="/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/"><time>02-22</time><span>macOS采集/录制系统音频数据</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2020</div><div class="archive-list"><a class='post fs14' href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/"><time>03-14</time><span>生命以负熵为食</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2019</div><div class="archive-list"><a class='post fs14' href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/"><time>04-03</time><span>mp4文件格式重点解析</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2018</div><div class="archive-list"><a class='post fs14' href="/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/"><time>08-30</time><span>iOS实现Crash捕获与堆栈符号化</span></a></div></article></div>
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/code/">code</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2021-02-22T11:14:10.000Z">2021-02-22</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2024-11-14T14:15:03.458Z">2024-11-14</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>macOS采集/录制系统音频数据</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>PC端音视频相关应用往往会涉及到系统音频采集相关需求。例如音视频通信应用在屏幕共享场景下，用户除了共享屏幕内容之外，往往需要共享音频数据。目前macOS没有系统API可以直接获取输出到播放设备的音频数据，这就需要通过别的办法来采集系统音频。由于macOS开发相关资料较少，完成这个需求也花了点时间，在这里将思路做个分享，希望能帮助到有这方面需求的朋友。</p>
+<h1 id="技术背景"><a href="#技术背景" class="headerlink" title="技术背景"></a>技术背景</h1><h2 id="macOS音频设备管理"><a href="#macOS音频设备管理" class="headerlink" title="macOS音频设备管理"></a>macOS音频设备管理</h2><p>macOS支持管理多个音频输入输出设备，可以使用“音频 MIDI 设置”来设置如麦克风和多声道音频接口。<br><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108191538456.png" alt="image.png"></p>
+<p>音频 MIDI 设置”界面如上图所示，左侧列表展示了所有音频输入输出设备，例如内建麦克风、扬声器、AirPods、通过数据线连接端iPhone设备，右侧界面支持调节设备端具体参数，例如音量等。</p>
+<p>我们可以通过右键选择设备，将其设为系统默认的输入输出设备。设为默认设备后，设备列表上会有一个小图标显示，同时，系统会默认在对应的设备上采集、播放音频数据。当然，应用也依然可以选择特定设备采集、播放音频，例如Abode公司的Audition中可以通过设置选择输入输出设备。</p>
+<h2 id="switchaudio-osx"><a href="#switchaudio-osx" class="headerlink" title="switchaudio-osx"></a>switchaudio-osx</h2><p>switchaudio-osx是一款开源项目，支持命令行设置macOS默认输入输出音频设备。这个开源项目为我们通过代码切换系统音频设备提供了极大帮助。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/deweller/switchaudio-osx">https://github.com/deweller/switchaudio-osx</a></p>
+<h2 id="KEXT内核扩展"><a href="#KEXT内核扩展" class="headerlink" title="KEXT内核扩展"></a>KEXT内核扩展</h2><p>KEXT是macOS的内核扩展程序，通常用于系统驱动程序。内核扩展运行于内核态，支持动态加载。</p>
+<p>我们可以在Xcode中选择“general kernel extension”创建内核扩展，基于IOKit接口实现驱动程序，生成的产物以kext作为后缀名。</p>
+<p>加载驱动需要首先将kext文件拷贝到系统目录（需要管理员权限）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Library/Extensions </span><br></pre></td></tr></table></figure>
+
+<p>加载驱动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo kextload /path/to/kext.kext</span><br></pre></td></tr></table></figure>
+
+<p>卸载驱动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo kextunload /path/to/kext.kext</span><br></pre></td></tr></table></figure>
+
+<h2 id="Soundflower"><a href="#Soundflower" class="headerlink" title="Soundflower"></a>Soundflower</h2><p>Soundflower是mac端开源的kext内核扩展程序，它虚拟了一套音频采集、播放设备驱动，直接将播放数据传给采集设备，实现音频数据环路。通过将系统默认输入输出设备设置为Soundflower，就可以采集到系统播放的音频数据。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/RogueAmoeba/Soundflower-Original">https://github.com/RogueAmoeba/Soundflower-Original</a>  </p>
+<p><strong>Update(2021.6.9):</strong></p>
+<p>新发布的macOS11安全管理策略变得更为严格，由于kext运行在内核态，系统对其做了更多限制，不再建议使用。官方说明如下：<a target="_blank" rel="noopener" href="https://support.apple.com/zh-cn/guide/deployment/depa5fb8376f/web">macOS 中的系统和内核扩展</a></p>
+<p>作为替代，建议使用基于CoreAudio框架实现的虚拟设备插件。CoreAudio插件运行在用户态，插件加载后，作用于Soundflower基本一致。</p>
+<p>相关资料可以参考：<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/coreaudio/building_an_audio_server_plug-in_and_driver_extension/">Building an Audio Server Plug-in and Driver Extension</a></p>
+<h1 id="方案实现"><a href="#方案实现" class="headerlink" title="方案实现"></a>方案实现</h1><p>介绍完以上的技术背景，其实就可以设计出macOS系统音频数据采集方案：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/attachments/1240-20220108191546693.png" alt="image.png"></p>
+<p>如上图所示，用户App通过mac系统播放音频。</p>
+<p>我们可以在启动系统音频采集功能时将系统音频播放设备设置为Soundflower虚拟扬声器，同时在App中将输入设为Soundflower虚拟麦克风和硬件麦克风，将混音后的音频数据输出到硬件扬声器。关闭系统音频采集功能将系统设置还原。理论上，这就已经可以满足我们的需求了。</p>
+<h1 id="关键调用流程"><a href="#关键调用流程" class="headerlink" title="关键调用流程"></a>关键调用流程</h1><p>为了实现以上方案，有以下关键调用流程：</p>
+<ol>
+<li>第一次调用内录接口时，请求管理员权限，将Soundflower.kext内核扩展拷贝到系统目录</li>
+<li>调用kextload命令加载Soundflower.kext</li>
+<li>将系统默认音频播放设备设置为Soundflower虚拟扬声器</li>
+<li>App中将音频采集设备设置为Soundflower虚拟麦克风</li>
+<li>App中如果有硬件麦克风采集需求，则另起一路硬件麦克风采集</li>
+<li>App中将音频播放设备设置为硬件扬声器</li>
+</ol>
+<p>需要关闭该功能时，需要执行如下调用流程：</p>
+<ol>
+<li>将系统默认输入输出设备还原</li>
+<li>卸载Soundflower.kext</li>
+</ol>
+<p>以上调用流程并不复杂，关键代码都可以从以上介绍的开源项目中找到参考，需要注意一下几点：</p>
+<p>加载&#x2F;卸载kext需要系统提权，macOS提权可以选择<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/security/authorizationref">AuthorizationRef</a>或者苹果官方推荐的<a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/samplecode/SMJobBless/Listings/ReadMe_txt.html#//apple_ref/doc/uid/DTS40010071-ReadMe_txt-DontLinkElementID_3">SMJobBless</a></p>
+<p>切换系统默认音频设备代码实现可以参考switchaudio-osx项目中<a target="_blank" rel="noopener" href="https://github.com/deweller/switchaudio-osx/blob/master/audio_switch.c">audio_switch.c</a>相关代码</p>
+<p>至于mac端音频采集播放的代码实现就相对比较复杂了，不过幸运的是，谷歌WebRTC项目中<a target="_blank" rel="noopener" href="https://chromium.googlesource.com/external/webrtc/+/refs/heads/master/modules/audio_device/mac/audio_device_mac.cc">audio_device_mac.cc</a>已经有了一套实现</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>文本提供了macOS采集&#x2F;录制系统音频数据的一种实现思路。具体代码实现过程中，还是有很多工作需要做的，例如系统提权如果要做的比较友好就需要用到<a target="_blank" rel="noopener" href="https://developer.apple.com/library/archive/samplecode/SMJobBless/Listings/ReadMe_txt.html#//apple_ref/doc/uid/DTS40010071-ReadMe_txt-DontLinkElementID_3">SMJobBless</a>启动守护进程来实现。当然，这属于另外一个话题了，在此不再赘述。</p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">较新文章</div><a href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">使用智能指针管理对象生命周期</a></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/">生命以负熵为食</a></div></section></div>
+
+
+
+
+
+
 <footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Aster Zhang</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
-</aside><div class='float-panel blur'>
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E8%83%8C%E6%99%AF"><span class="toc-text">技术背景</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#macOS%E9%9F%B3%E9%A2%91%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86"><span class="toc-text">macOS音频设备管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#switchaudio-osx"><span class="toc-text">switchaudio-osx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KEXT%E5%86%85%E6%A0%B8%E6%89%A9%E5%B1%95"><span class="toc-text">KEXT内核扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Soundflower"><span class="toc-text">Soundflower</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E5%AE%9E%E7%8E%B0"><span class="toc-text">方案实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B"><span class="toc-text">关键调用流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
   </button>
