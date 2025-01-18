@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
-  <meta name="robots" content="noindex,follow">
+  
   <meta name="generator" content="Hexo 6.3.0">
   <meta http-equiv='x-dns-prefetch-control' content='on' />
   
@@ -17,20 +17,26 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>归档 - Aster's Blog</title>
+  <title>服务端基于libMesa实现离屏渲染 - Aster's Blog</title>
 
   
-    <meta property="og:type" content="website">
-<meta property="og:title" content="归档">
-<meta property="og:url" content="http://asterzhang.com/archives/2020/03/index.html">
+    <meta name="description" content="OpenGL是一种跨平台的图形渲染API，主要用于2D和3D图形的渲染。OpenGL实现通常由GPU厂商提供，使得程序可以不关心硬件实现直接与GPU做交互。一般情况下图形渲染在客户端进行，因为大部分渲染目标都是屏幕窗口。而不同操作系统的图形窗口系统实现千差万别，所以又有了EGL（Embedded-System Graphics Library） 接口，用于管理图形上下文、Surface，作为Ope">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务端基于libMesa实现离屏渲染">
+<meta property="og:url" content="http://asterzhang.com/2025/01/18/code/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%9F%BA%E4%BA%8ElibMesa%E5%AE%9E%E7%8E%B0%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/index.html">
 <meta property="og:site_name" content="Aster&#39;s Blog">
+<meta property="og:description" content="OpenGL是一种跨平台的图形渲染API，主要用于2D和3D图形的渲染。OpenGL实现通常由GPU厂商提供，使得程序可以不关心硬件实现直接与GPU做交互。一般情况下图形渲染在客户端进行，因为大部分渲染目标都是屏幕窗口。而不同操作系统的图形窗口系统实现千差万别，所以又有了EGL（Embedded-System Graphics Library） 接口，用于管理图形上下文、Surface，作为Ope">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-18T08:49:00.000Z">
+<meta property="article:modified_time" content="2025-01-18T09:07:18.586Z">
 <meta property="article:author" content="Aster Zhang">
+<meta property="article:tag" content="AV">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
   
   
   
-  
+  <meta name="keywords" content="AV,Linux">
 
   <!-- feed -->
   
@@ -45,7 +51,7 @@
 </head>
 <body>
 
-<div class="l_body s:aa index tech" id="start" layout="undefined" ><aside class="l_left"><div class="leftbar-container">
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
 
 
 <header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avatar.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Aster's Blog</div></a></div></header>
@@ -57,21 +63,70 @@
 <nav class="menu dis-select"></nav>
 </div>
 <div class="widgets">
+
+
 <widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">最近更新</span></div><div class="widget-body fs14"><a class="item title" href="/2025/01/18/code/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%9F%BA%E4%BA%8ElibMesa%E5%AE%9E%E7%8E%B0%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/"><span class="title">服务端基于libMesa实现离屏渲染</span></a><a class="item title" href="/2024/06/16/code/sort%E4%BD%BF%E7%94%A8%E4%B8%8D%E8%A7%84%E8%8C%83%E5%AF%BC%E8%87%B4Crash%E9%97%AE%E9%A2%98/"><span class="title">sort使用不规范导致Crash问题</span></a><a class="item title" href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/"><span class="title">生命以负熵为食</span></a><a class="item title" href="/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/"><span class="title">macOS采集/录制系统音频数据</span></a><a class="item title" href="/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/"><span class="title">iOS实现Crash捕获与堆栈符号化</span></a><a class="item title" href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/"><span class="title">mp4文件格式重点解析</span></a><a class="item title" href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"><span class="title">使用智能指针管理对象生命周期</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
 
-<header class="header mobile-only"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="/images/avatar.png" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">Aster's Blog</div></a></div></header>
-
- 
 
 
-<div class="navbar top"><nav class="post"><a href="/">近期发布</a><a href="/categories">分类</a><a href="/tags">标签</a><a class="active" href="/archives">归档</a></nav></div><div class="post-list archives"><article class="" id="archive"><div class='archive-header h4'>2025</div><div class="archive-list"><a class='post fs14' href="/2025/01/18/code/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%9F%BA%E4%BA%8ElibMesa%E5%AE%9E%E7%8E%B0%E7%A6%BB%E5%B1%8F%E6%B8%B2%E6%9F%93/"><time>01-18</time><span>服务端基于libMesa实现离屏渲染</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2024</div><div class="archive-list"><a class='post fs14' href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/"><time>10-12</time><span>使用智能指针管理对象生命周期</span></a></div><div class="archive-list"><a class='post fs14' href="/2024/06/16/code/sort%E4%BD%BF%E7%94%A8%E4%B8%8D%E8%A7%84%E8%8C%83%E5%AF%BC%E8%87%B4Crash%E9%97%AE%E9%A2%98/"><time>06-16</time><span>sort使用不规范导致Crash问题</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2021</div><div class="archive-list"><a class='post fs14' href="/2021/02/22/code/macOS%E9%87%87%E9%9B%86%E7%B3%BB%E7%BB%9F%E9%9F%B3%E9%A2%91/"><time>02-22</time><span>macOS采集/录制系统音频数据</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2020</div><div class="archive-list"><a class='post fs14' href="/2020/03/14/text/%E7%94%9F%E5%91%BD%E4%BB%A5%E8%B4%9F%E7%86%B5%E4%B8%BA%E9%A3%9F/"><time>03-14</time><span>生命以负熵为食</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2019</div><div class="archive-list"><a class='post fs14' href="/2019/04/03/code/MP4%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E9%87%8D%E7%82%B9%E8%A7%A3%E6%9E%90/"><time>04-03</time><span>mp4文件格式重点解析</span></a></div></article><article class="" id="archive"><div class='archive-header h4'>2018</div><div class="archive-list"><a class='post fs14' href="/2018/08/30/code/iOS%E5%AE%9E%E7%8E%B0Crash%E6%8D%95%E8%8E%B7%E4%B8%8E%E5%A0%86%E6%A0%88%E7%AC%A6%E5%8F%B7%E5%8C%96/"><time>08-30</time><span>iOS实现Crash捕获与堆栈符号化</span></a></div></article></div>
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">主页</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">文章</a><span class="sep"></span><a class="cap breadcrumb-link" href="/categories/code/">code</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">发布于：<time datetime="2025-01-18T08:49:00.000Z">2025-01-18</time></span><span class="sep updated"></span><span class="text updated">更新于：<time datetime="2025-01-18T09:07:18.586Z">2025-01-18</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>服务端基于libMesa实现离屏渲染</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><p>OpenGL是一种跨平台的图形渲染API，主要用于2D和3D图形的渲染。OpenGL实现通常由GPU厂商提供，使得程序可以不关心硬件实现直接与GPU做交互。一般情况下图形渲染在客户端进行，因为大部分渲染目标都是屏幕窗口。而不同操作系统的图形窗口系统实现千差万别，所以又有了EGL（Embedded-System Graphics Library） 接口，用于管理图形上下文、Surface，作为OpenGL与原始窗口系统之间的桥梁。</p>
+<p>服务端渲染是相对小众的需求，主要场景有云渲染、媒体处理等。服务端渲染有一个问题是我们的服务通常部署在ECS或K8s上，不会配置GPU，也没有GUI界面，软硬件环境都不具备。要解决这个问题，我们可以借助开源的图形库libMesa。</p>
+<h2 id="OSMesa软件渲染"><a href="#OSMesa软件渲染" class="headerlink" title="OSMesa软件渲染"></a>OSMesa软件渲染</h2><p>OSMesa (Off-Screen Mesa) 是libMesa的一部分。可以用于在没有窗口系统支持的情况下进衣赖于GPU进行渲染。OSMesa的使用也很简单，首先安装依赖：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y mesa-libOSMesa-devel mesa-libGL-devel mesa-libEGL-devel</span><br></pre></td></tr></table></figure>
+
+<p>接下来是常规的创建GL上下文，这里需要引入&lt;GL&#x2F;osmesa.h&gt;头文件，使用其提供系列函数实现GL上下文管理，示例代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GL/osmesa.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;GL/gl. h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 定义窗口宽度和高度</span></span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> width = <span class="number">800</span>;</span><br><span class="line">    <span class="type">const</span> <span class="type">int</span> height = <span class="number">600</span>;</span><br><span class="line">    <span class="comment">// 创建OSMesa上下文</span></span><br><span class="line">    OSMesaContext ctx = <span class="number">0</span>SMesaCreateContextExt(OSMESA_RGBA, <span class="number">16</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (!ctx)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;OSMesaCreateContext failed\n&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 创建一个缓冲区</span></span><br><span class="line">    <span class="type">void</span> *buffer = <span class="built_in">malloc</span>(width * height * <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">if</span> (!buffer)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(stderr, <span class="string">&quot;Buffer allocation failed\n&quot;</span>);</span><br><span class="line">        <span class="built_in">OSMesaDestroyContext</span>(ctx);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建一个缓冲区</span></span><br><span class="line">    <span class="type">void</span> *buffer = <span class="built_in">malloc</span>(width * height * <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">if</span> (!buffer)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Buffer allocation failed\n&quot;</span>);</span><br><span class="line">        <span class="built_in">OSMesaDestroyContext</span>(ctx);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 绑定上下文并将缓冲区绑定到上下文</span></span><br><span class="line">    <span class="built_in">OSMesaMakeCurrent</span>(ctx, buffer, GL_UNSIGNED_BYTE, width, height);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 清除颜色缓冲区为红色</span></span><br><span class="line">    <span class="built_in">glClearColor</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>);</span><br><span class="line">    <span class="built_in">gLClear</span>(GL_COLOR_BUFFER_BIT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将绘制结果保存到文件</span></span><br><span class="line">    FILE *f = <span class="built_in">fopen</span>(<span class="string">&quot;output. rgba&quot;</span>, <span class="string">&quot;wb&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (f)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fwrite</span>(buffer, width * height * <span class="number">4</span>, <span class="number">1</span>, f);</span><br><span class="line">        <span class="built_in">fclose</span>(f);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;Image saved to output.rgba\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(stderr, <span class="string">&quot;Failed to open file for writing\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 清理</span></span><br><span class="line">    <span class="built_in">OSMesaMakeCurrent</span>((OSMesaContext) <span class="literal">nullptr</span>, <span class="literal">nullptr</span>, GL_UNSIGNED_BYTE, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">free</span>(buffer);</span><br><span class="line">    <span class="built_in">OSMesaDestroyContext</span>(ctx);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>这里我们创建了一块内存作为渲染缓冲区，渲染结果直接可以通过内存获取。当然，使用glReadPixels 读取结果也是一样的。</p>
+<h2 id="DRM硬件加速"><a href="#DRM硬件加速" class="headerlink" title="DRM硬件加速"></a>DRM硬件加速</h2><p>如果你的服务部署在本地物理机并配置有显卡，或是配置了带GPU的ECS机器，那可以用DRM做硬件加速。DRM（Direct Rendering Manager）是Linux内核的一部分，用于管理图形显示的硬件加速以及图形上下文的切换。它的优点是可以不依赖图形窗口系统，直接与GPU通信，提高渲染性能。<br>这个方案我们项目里没有实际应用，相关实现可以参考libMesa提供的demo：<br><a target="_blank" rel="noopener" href="https://gitlab.freedesktop.org/mesa/demos/-/blob/main/src/egl/opengl/eglkms.c">https://gitlab.freedesktop.org/mesa/demos/-/blob/main/src/egl/opengl/eglkms.c</a></p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>许可协议</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">较早文章</div><a href="/2024/10/12/code/%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E7%AE%A1%E7%90%86%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">使用智能指针管理对象生命周期</a></div></section></div>
+
+
+
+
+
+
 <footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Aster Zhang</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
 </div></footer>
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
-</aside><div class='float-panel blur'>
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">本文目录</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#OSMesa%E8%BD%AF%E4%BB%B6%E6%B8%B2%E6%9F%93"><span class="toc-text">OSMesa软件渲染</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DRM%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F"><span class="toc-text">DRM硬件加速</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>回到顶部</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
   <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
   </button>
