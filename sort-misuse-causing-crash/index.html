@@ -1,0 +1,424 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aster Zhang" href="https://asterzhang01.github.io/rss.xml"><meta name="generator" content="Astro v5.12.8"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Theme script --><script src="/js/theme.js"></script><!-- Canonical URL --><link rel="canonical" href="https://asterzhang01.github.io/sort-misuse-causing-crash/"><!-- Primary Meta Tags --><title>sort使用不规范导致Crash问题</title><meta name="title" content="sort使用不规范导致Crash问题"><meta name="description"><link rel="stylesheet" href="/_astro/_slug_.CTQ2zI8_.css">
+<style>.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{border-radius:.5rem}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{margin-top:.5rem;display:block;text-align:center;font-size:.875rem;line-height:1.25rem;font-weight:400;font-style:normal;--tw-text-opacity: 1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}}.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:auto;max-width:100%}.prose[data-astro-cid-bvzihdzo] p[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] li[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo]{margin-left:auto;margin-right:auto}.prose[data-astro-cid-bvzihdzo]>[data-astro-cid-bvzihdzo]+[data-astro-cid-bvzihdzo]{margin-top:1rem}.prose[data-astro-cid-bvzihdzo]>h1[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h2[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h3[data-astro-cid-bvzihdzo]{margin-top:2rem;margin-bottom:1rem}.prose[data-astro-cid-bvzihdzo]>ul[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>ol[data-astro-cid-bvzihdzo]{padding-left:1.5rem}.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{border-left-width:4px;--tw-border-opacity: 1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1));padding-left:1rem;font-style:italic;--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1));--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}.prose[data-astro-cid-bvzihdzo] pre[data-astro-cid-bvzihdzo]{margin-top:1.5rem;margin-bottom:1.5rem}
+</style></head> <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100" data-astro-cid-bvzihdzo> <header class="bg-white shadow-sm dark:bg-gray-800"> <nav class="container mx-auto px-4 py-3 flex items-center justify-between"> <h2 class="text-xl font-bold m-0"> <a href="/" class="no-underline text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">Aster Zhang</a> </h2> <div class="flex space-x-4"> <!-- <HeaderLink href="/">Home</HeaderLink> --> <a href="/category" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Category </a> <a href="/tag" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Tags </a> <a href="/archive" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Archive </a> <a href="/about" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> About </a> </div> <div class="flex items-center space-x-2"> <a href="https://github.com/asterzhang01" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"> <span class="sr-only">Go to Astro's GitHub repo</span> <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg> </a> </div> </nav> </header> <main class="max-w-3xl mx-auto px-4 py-8" data-astro-cid-bvzihdzo> <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" data-astro-cid-bvzihdzo>  <div class="prose prose-lg dark:prose-invert max-w-none px-6 py-8 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-a:text-blue-600 hover:prose-a:text-blue-800 dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300" data-astro-cid-bvzihdzo> <header class="mb-8" data-astro-cid-bvzihdzo> <div class="text-sm text-gray-500 dark:text-gray-400 mb-2" data-astro-cid-bvzihdzo> <time datetime="2024-06-16T10:16:00.000Z"> Jun 16, 2024 </time>  </div> <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4" data-astro-cid-bvzihdzo>sort使用不规范导致Crash问题</h1>  </header> <hr class="my-6 border-gray-200 dark:border-gray-700" data-astro-cid-bvzihdzo> <div class="mt-8" data-astro-cid-bvzihdzo>  <h2 id="问题排查">问题排查</h2>
+<p>最近在使用std::sort进行排序的时候遇到一个crash问题，一开始摸不着头脑，花了一番功夫才找到原因。</p>
+<p>背景是音视频通信的媒体服务端在和客户端建立媒体通道时，往往会有多条连接作为主备连接，应对不同网络情况，例如同时有5G、WIFI等多路连接。这些连接一般都是由客户端通过发送STUN协议的UDP包发起的。</p>
+<p>当客户端建立的连接数超过限制时，服务端需要枝剪多余连接，枝剪的逻辑需要通过对比连接质量等一系列条件来排序决定。C++标准库已经为我们实现性能优异的std:sort，通常也没人会去挑战STL，这里我也直接就用了。代码片段如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>void P2PTransportChannel::PruneConnections2() {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    std::map&#x3C;rtc_base::IPAddress, std::vector&#x3C;Connection*>> conns_map;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    //... insert map</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    for (auto pair : conns_map) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        // sort connections</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::sort(pair.second.begin(), pair.second.end(), [this](Connection* a, Connection* b) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            return CompareConnectionCandidates(a, b) >= 0;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        });</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>这里sort传入一个闭包，闭包里调用CompareConnectionCandidates方法比较两条连接的优先级（因为两条连接可能优先级相等，所以用了<u>>=</u>，这也为后面的crash埋下了伏笔）。</p>
+<p>代码乍一看好像没啥问题，上线前自测和QA测试也都正常。然而版本上线后，线上却出现了多例crash，coredump在了比较方法中，而且有个特点是connection连接数都比较多；</p>
+<p>从crash堆栈看到参与比较的两个Connection指针a=0x87a804feff3e1602，b=0x4bc4a00，这里a的指针异常大：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>#0 0×00007f849b8cbbf1 in ice::P2PTransportChannel::CompareCandidatePairNetworks (ice::Connection const*, ice::Connection const*, rtc_base::optional&#x3C;rtc_base::AdapterType>) const (this=0xd0c1400, a=0×87a804feffe1602, b=0x4bc4a00, network_pr eference=...) at ../../../../core/pc/transport/ice/ice/p2p_transport_channel.cc:1629</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#1 0x00007f849b8cbdab in ice::P2PTransportChannel::CompareConnectionCandidates (ice::Connection const*, ice::Connection const*) const (this=&#x3C;optimized cut >, a=0x87a804feff3e1602, b=0x4bc4a00) at ../../../../core/pc/transport/ice/ice/p2p_transport_channel.cc:1731</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#2 0x00007f849b8cc0df in ice::P2PTransportChannel::&#x3C;lambda(ice::Connection *, ice::Connection*)>::operator() (b=&#x3C;optimized out>, a=&#x3C;optimized out>, closure=&#x3C;synthetic pointer>) at ../../../../core/pc/transport/ice/ice/p2p_transport_channel.cc:1996</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#3 0x007849b8ccodf in _gnu_cxx_opsTter_cop_itercdin_ice:PPTransportChannel::PruneConnections2()::&#x3C;lambda(ice::Connection*, ice::Connection*)>>::operator()&#x3C;_gnu_cxx::_normal_iteratorșice::Connection**, std::vector&#x3C;ice::Connection*>>,_gnu_cxx::_normal_iterator&#x3C;ice::Connection**, std::vector&#x3C;ice::Connection*>>>(it2=0x4bc4a00, _it1=..., this=&#x3C;synthetic pointer>) at /opt/rh/devtoolset-7/root/usr/include/c++/7/bits/predefined_ops.h:143</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#4 0×00007f849b8ccodf in std::_unguarded_partitions_gnu_cxx::_normal_iterator&#x3C;ice::Connection**, std::vector&#x3C;ice::Connection*>>,_gnu_cxx::_ops::_Iter_comp_iter&#x3C;ice::P2PTransportChannel::PruneConnections2()::&#x3C;lambda(ice::Connection*, ice::Connection*)>>>(_comp=..., _pivot=0x4bc4a00, _last=0×87a804feff3e1602, _first=0x87a804feff3e1602) at /opt/rh/devtoolset-7/root/usr/include/c++/7/bits/stl_algo.h:1902</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>为了进一步确认，继续通过反汇编查看crash附近代码执行情况。可以看到崩溃行所在地方是从rsi访存写入rax寄存器，很可能是bad access了：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>   0x00007f849b8cbbf0 &#x3C;+0>: push %rbp</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>=> 0x00007f849b8cbbf1 &#x3C;+1>: mov 0x150 (%rsi),%rax</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>继续查看内部寄存器状态：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>info register</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rax 0×0 0</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rbx 0x5f8cd78 100191608</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rcx 0×7f849e4b2db8 140207568137656</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rdx 0×4bc4a00 79448576</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rsi 0×87a804feff3e1602 -8671675589251426814</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rdi 0×d0c1400 218895360</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rbp 0×7f849e4b2de0 0×7f849e4b2de0 </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rsp 0×7f849e4b2da0 0×7f849e4b2da0</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>果然，rsi寄存器存放的Connection指针地址异常了。但是这里我们用的标准库进行遍历的，vector对象也在栈上，难道vector内部成员被篡改了？</p>
+<p>继续查看vector对象，一共17个成员，Connection指针地址也没有问题。难道是vector::end()返回的地址有问题？</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>p pair.second </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>$3 = std::vector of length 17, capacity 17={0×4bc4a00, 0xfb5de00, 0xf43c400, 0xf43a0, 0xef7400, xf43be00, 0xf3b000, xf43000, xf3bde00,0x1b800, xef73, fb5e400, 0xf3bf600, 0xf3bc600, 0x11b26000, 0xe18e000, 0x11b27e00}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>继续查看vector内部结构题__M_impl。其中__M_start指向容器中第一个元素的指针，__M_finish指向容器最后一个有效元素的下一个位置的指针，end()方法返回的就是__M_finish。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>p pair.second._M_impl</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>$2={&#x3C;std::allocator&#x3C;ice::Connection*>>={&#x3C;_gnu_cxx::new_allocator&#x3C;ice::Connection*>>={&#x3C;No data fields>}, &#x3C;No data fields>}, M_start =0x5f8ccf0, _M_finish =0x5f8cd78, _M_end_of_storage = 0x5f8cd78}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>M_finish = 0x5f8cd78，这个地址看起来也没问题。既然拿到了内存地址，我们可以进一步分析下里面存的到底是什么：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>x /8xg 0x5f8ccf0</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8ccf0: 0x0000000004bc4a00 0x000000000fb5de00</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd00: 0x000000000f43c400 0x000000000f43ac00</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd10: 0x000000000ef74a00 0x000000000f43be00</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd20: 0x000000000f3bc000 0X000000000f43a000`</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>x /8xg 0x5f8cd30</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd30: 0x000000000f3bde00 0x0000000011b27800</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd40: 0x000000000ef73800 0x000000000fb5e400</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd50: 0x000000000f3bf600 0x000000000f3bc600</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd60: 0x0000000011626000 0x000000000e18e000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>x /8xg 0x5f8cd70</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd70: 0x0000000011b27e00 0x87a804feff3e1602</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd80: 0x0000000005f8ce10 0x0000000000000000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cd90: 0x0000000100000005 0x0000000000000001</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x5f8cda0: 0x0000000000000000 0x0000000100000005</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>这里我们用x/8xg 查看内存地址。8代表要显示的内存单元数量，x表示16进制，g表示读取8字可以看到异常值0x87a804feff3e1602在内存地址0x5f8cd78处。这个地址对应__M_finish，是结束的地方，按道理sort排序不可能会访问到这个地址。但是出错的堆栈又实实在在指向了这个地址，一时间没有了思路。</p>
+<h2 id="stdsort实现">std::sort实现</h2>
+<p>没办法，只能尝试从源码入手，看看能不能有线索。通过分析代码和查阅资料，了解到gcc7的sort实现采用了混合排序，包含了插入排序、快速排序、桶排序三种排序算法，目的是为了综合各种排序算法的优点：</p>
+<ul>
+<li>
+<p>在数据量很大时采用正常的快速排序，此时效率为O（logN）。</p>
+</li>
+<li>
+<p>一旦分段后的数据量小于某个阈值，就改用插入排序，因为此时这个分段是基本有序的，这时效率可达O（N）。</p>
+</li>
+<li>
+<p>在递归过程中，如果递归层次过深，分割行为有恶化倾向时，它能够自动侦测出来，使用堆排序来处理，在此情况下，使其效率维持在堆排序的O（N IogN），但这又比一开始使用堆排序好。</p>
+</li>
+</ul>
+<p>实现代码如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>template&#x3C;typename _RandomAccessIterator, typename _Compare></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>inline void</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_sort(_RandomAccessIterator _first, _RandomAccessIterator _last, _Compare _comp)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    if (_first!= _last)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::_introsort_loop(_first, _last, _comp);         // 内省式排序</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::lg(_last - _first) * 2;                        // 计算复杂度</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::_final_insertion_sort(_first, _last, _comp);   // 插入排序</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>这里是一个函数模版，包含了两个调用，std：introsort_loop是排序算法主体，std::final_insertion_sort则是插入排序；</p>
+<p>先来看__<strong>introsort_loop：</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>template&#x3C;typename _RandomAccessIterator, typename _Size, typename _Compare></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_introsort_loop(_RandomAccessIterator _first, _RandomAccessIterator _last, _Size _depth_limit, _Compare _comp)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    while (_last - _first > int(_S_threshold))）// 数量大于_S_threshold（16），使用快速排序</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        if (_depth_limit == 0)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            std::_partial_sort(_first, _last, _last, _comp);// 深度>0，使用桶排序</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            return;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        --_depth_limit;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        _RandomAccessIterator _cut = std::_unguarded_partition_pivot(_first, _last, _comp);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        _last = _cut;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::_introsort_loop(_cut, _last, _depth_limit, _comp);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span></code></pre>
+<p>注意只有当vector的数量超过__S_threshold（16）时，才会导致进入快速排序；否则，直接跳出循环（执行final__insertion_sort插入排序）。快速排序在while循坏体中，这里有一定的技巧性，调用unguarded__partition_pivot的返回值cut是pivot右半部分，之后再pivot左半部分继续调用introsort__loop，这样做可以减少函数调用次数。</p>
+<p>接下来我们继续查看__<strong>unguarded_partition_pivot主体函数：</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>template&#x3C;typename _RandomAccessIterator, typename _Compare></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>inline _RandomAccessIterator</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_unguarded_partition_pivot(_RandomAccessIterator _first, _RandomAccessIterator _last, _Compare _comp)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    _RandomAccessIterator _mid = _first + (_last - _first) / 2;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    std::_move_median_to_first(_first, _first + 1, _mid, _last - 1, _comp);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    return std::_unguarded_partition(_first + 1, _last, _first, _comp);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>主体分为两个方法，move_median_to_first的作用是从首部+1、尾部和中部三个元素的取中值作为pivot，避免可能出现快速排序的复杂度最差情况O（N？）。注意这里会调用comp比较函数进行比较和swap操作，把中间值交互到首部：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>template&#x3C;typename _Iterator, typename _Compare></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_move_median_to_first(_Iterator _result, _Iterator _a, _Iterator _b, _Iterator _c, _Compare _comp)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    if (_comp(_a, _b))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        if (_comp(_b, _c))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            std::iter_swap(_result, _b);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        else if (_comp(_a, _c))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            std::iter_swap(_result, _c);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        else</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            std::iter_swap(_result, _a);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    else if (_comp(_a, _c))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::iter_swap(_result, _c);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    else if (_comp(_b, _c))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::iter_swap(_result, _b);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    else</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::iter_swap(_result, _b);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>__unguarded_partition方法就是我们平常所使用的快速排序主体部分：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>template&#x3C;typename _RandomAccessIterator, typename _Compare></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_RandomAccessIterator _unguarded_partition(_RandomAccessIterator _first, _RandomAccessIterator _last, _RandomAccessIterator _pivot, _Compare _comp)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    while (true)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        while (_comp(_first, _pivot))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            ++_first;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        while (_comp(_pivot, _last))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            --_last;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        if (!(_first &#x3C; _last))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>            return _first;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::iter_swap(_first, _last);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        ++_first;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>这里不多做解释，《STL源码剖析》给出了两个非常直观的示意图：</p>
+<p><strong>分割示例一</strong>
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="642" height="378" src="/_astro/stl-unguarded-partition-sample1.CGnl6CPF_Z26xA6G.webp" ></p>
+<p><strong>分割示例二</strong>
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="599" height="458" src="/_astro/stl-unguarded-partition-sample2.BMMXzzPu_1VzW56.webp" ></p>
+<p>方法名unguarded和代码里的while循环引起了我的警觉，这个函数没有对first和last作边界检查，而是以两个指针交错作为中止条件，节约了比较运算的开支。可以这么做的理由是因为，选择是首尾中间位置三个值的中间值作为pivot，因此一定会在超出此有效区域之前中止指针的移动（前提是comp条件不能相等）。</p>
+<p>这里comp(first, pivot)如果是true，first会一直循环递增。我们的业务逻辑中，比较元素Connection是可能相等的。这里极有可能是first累加越界了，其地址也能和崩溃的地址对上。</p>
+<p>如果是这个原因的话，我们就好验证了。写一段测试代码，放入大于__S_threshold（16）个相同元素，看看会不会崩溃。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>#include &#x3C;iostream></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#include &#x3C;map></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#include &#x3C;vector></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#include &#x3C;algorithm></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>struct Connection {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    int val = 0;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>};</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>bool compare(Connection* a, Connection* b) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    return a->val >= b->val;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>int main() {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    std::map&#x3C;int, std::vector&#x3C;Connection*>> conn_map;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    for (int i = 0; i &#x3C; 17; i++) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        Connection* c = new Connection{1};</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        conn_map[1].push_back(c);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    for (auto&#x26; pair : conn_map) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        std::sort(pair.second.begin(), pair.second.end(), compare);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    std::cout &#x3C;&#x3C; "ok:" &#x3C;&#x3C; conn_map[1].size() &#x3C;&#x3C; std::endl;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    return 0;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>使用gcc7编译运行，果然出现崩溃了：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>$./a. out</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2 Segmentation fault (core dumped)</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>而将17改为16之后，结果就不崩溃了：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>$./a.out</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2 ok: 16</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>到这里，问题原因算是找到了。这也解释了为什么自测和QA难以发现，只有线上连接数多的时候才出现。回过头来查阅文档，上面写的很明白，sort的comp函数必须严格满足严格弱序（strict weak order）：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>Establishes strict weak ordering relation with the following properties:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- For all a, comp(a, a) == false.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- If comp(a, b) == true then comp(b, a) == false.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- if comp(a, b) == true and comp(b, c) == true then comp(a, c) == true.</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>看来还是使用的姿势不对，修复就好办了，我们把判断条件中的<u>=</u>去掉，这下也正常了：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>$./a.out</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2 0k:17</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="总结">总结</h2>
+<ul>
+<li>
+<p>std::sort实现混合了多种排序算法，当元素数量超过16个，会使用快速排序，不会进行边界检查；</p>
+</li>
+<li>
+<p>std::sort的comp函数必须严格满足严格弱序，如果比较元素相等，可能会导致crash问题；</p>
+</li>
+<li>
+<p>如果比较元素可能相等，想要结果保持稳定，使用std::stable_sort代替std::sort；</p>
+</li>
+</ul>
+<p>参考：
+<a href="https://feihu.me/blog/2014/sgi-std-sort/">https://feihu.me/blog/2014/sgi-std-sort/</a></p> <div class="mt-8"> <h3 class="text-xl font-semibold mb-4">Category</h3> <div class="flex flex-wrap gap-2"> <a href="/category/code" class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded hover:bg-blue-200 transition-colors"> code </a> </div> </div><div class="mt-6"> <h3 class="text-xl font-semibold mb-4">Tags</h3> <div class="flex flex-wrap gap-2"> <a href="/tag/c++" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> C++ </a> </div> </div> </div> </div> </article> </main> <footer class="bg-gray-100 py-8 text-center text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+&copy; 2025 Aster Zhang. All rights reserved.
+<!-- <div class="flex justify-center space-x-4 mt-4">
+		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Mastodon</span>
+			<svg
+				viewBox="0 0 16 16"
+				aria-hidden="true"
+				width="32"
+				height="32"
+				astro-icon="social/mastodon"
+				><path
+					fill="currentColor"
+					d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"
+				></path></svg
+			>
+		</a>
+		<a href="https://twitter.com/astrodotbuild" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Twitter</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/twitter"
+				><path
+					fill="currentColor"
+					d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
+				></path></svg
+			>
+		</a>
+		<a href="https://github.com/withastro/astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Go to Astro's GitHub repo</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/github"
+				><path
+					fill="currentColor"
+					d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+				></path></svg
+			>
+		</a>
+	</div> --> </footer>  </body></html>

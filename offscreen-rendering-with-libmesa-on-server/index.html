@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aster Zhang" href="https://asterzhang01.github.io/rss.xml"><meta name="generator" content="Astro v5.12.8"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Theme script --><script src="/js/theme.js"></script><!-- Canonical URL --><link rel="canonical" href="https://asterzhang01.github.io/offscreen-rendering-with-libmesa-on-server/"><!-- Primary Meta Tags --><title>服务端基于libMesa实现离屏渲染</title><meta name="title" content="服务端基于libMesa实现离屏渲染"><meta name="description"><link rel="stylesheet" href="/_astro/_slug_.CTQ2zI8_.css">
+<style>.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{border-radius:.5rem}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{margin-top:.5rem;display:block;text-align:center;font-size:.875rem;line-height:1.25rem;font-weight:400;font-style:normal;--tw-text-opacity: 1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}}.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:auto;max-width:100%}.prose[data-astro-cid-bvzihdzo] p[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] li[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo]{margin-left:auto;margin-right:auto}.prose[data-astro-cid-bvzihdzo]>[data-astro-cid-bvzihdzo]+[data-astro-cid-bvzihdzo]{margin-top:1rem}.prose[data-astro-cid-bvzihdzo]>h1[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h2[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h3[data-astro-cid-bvzihdzo]{margin-top:2rem;margin-bottom:1rem}.prose[data-astro-cid-bvzihdzo]>ul[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>ol[data-astro-cid-bvzihdzo]{padding-left:1.5rem}.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{border-left-width:4px;--tw-border-opacity: 1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1));padding-left:1rem;font-style:italic;--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1));--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}.prose[data-astro-cid-bvzihdzo] pre[data-astro-cid-bvzihdzo]{margin-top:1.5rem;margin-bottom:1.5rem}
+</style></head> <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100" data-astro-cid-bvzihdzo> <header class="bg-white shadow-sm dark:bg-gray-800"> <nav class="container mx-auto px-4 py-3 flex items-center justify-between"> <h2 class="text-xl font-bold m-0"> <a href="/" class="no-underline text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">Aster Zhang</a> </h2> <div class="flex space-x-4"> <!-- <HeaderLink href="/">Home</HeaderLink> --> <a href="/category" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Category </a> <a href="/tag" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Tags </a> <a href="/archive" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Archive </a> <a href="/about" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> About </a> </div> <div class="flex items-center space-x-2"> <a href="https://github.com/asterzhang01" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"> <span class="sr-only">Go to Astro's GitHub repo</span> <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg> </a> </div> </nav> </header> <main class="max-w-3xl mx-auto px-4 py-8" data-astro-cid-bvzihdzo> <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" data-astro-cid-bvzihdzo>  <div class="prose prose-lg dark:prose-invert max-w-none px-6 py-8 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-a:text-blue-600 hover:prose-a:text-blue-800 dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300" data-astro-cid-bvzihdzo> <header class="mb-8" data-astro-cid-bvzihdzo> <div class="text-sm text-gray-500 dark:text-gray-400 mb-2" data-astro-cid-bvzihdzo> <time datetime="2025-01-18T16:49:00.000Z"> Jan 18, 2025 </time>  </div> <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4" data-astro-cid-bvzihdzo>服务端基于libMesa实现离屏渲染</h1>  </header> <hr class="my-6 border-gray-200 dark:border-gray-700" data-astro-cid-bvzihdzo> <div class="mt-8" data-astro-cid-bvzihdzo>  <p>OpenGL是一种跨平台的图形渲染API，主要用于2D和3D图形的渲染。OpenGL实现通常由GPU厂商提供，使得程序可以不关心硬件实现直接与GPU做交互。一般情况下图形渲染在客户端进行，因为大部分渲染目标都是屏幕窗口。而不同操作系统的图形窗口系统实现千差万别，所以又有了EGL（Embedded-System Graphics Library） 接口，用于管理图形上下文、Surface，作为OpenGL与原始窗口系统之间的桥梁。</p>
+<p>服务端渲染是相对小众的需求，主要场景有云渲染、媒体处理等。服务端渲染有一个问题是我们的服务通常部署在ECS或K8s上，不会配置GPU，也没有GUI界面，软硬件环境都不具备。要解决这个问题，我们可以借助开源的图形库libMesa。</p>
+<h2 id="osmesa软件渲染">OSMesa软件渲染</h2>
+<p>OSMesa (Off-Screen Mesa) 是libMesa的一部分。可以用于在没有窗口系统支持的情况下进衣赖于GPU进行渲染。OSMesa的使用也很简单，首先安装依赖：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>yum install -y mesa-libOSMesa-devel mesa-libGL-devel mesa-libEGL-devel</span></span></code></pre>
+<p>接下来是常规的创建GL上下文，这里需要引入&#x3C;GL/osmesa.h>头文件，使用其提供系列函数实现GL上下文管理，示例代码如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span>#include &#x3C;stdlib.h></span></span>
+<span class="line"><span>#include &#x3C;GL/osmesa.h></span></span>
+<span class="line"><span>#include &#x3C;GL/gl. h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>int main()</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>    // 定义窗口宽度和高度</span></span>
+<span class="line"><span>    const int width = 800;</span></span>
+<span class="line"><span>    const int height = 600;</span></span>
+<span class="line"><span>    // 创建OSMesa上下文</span></span>
+<span class="line"><span>    OSMesaContext ctx = 0SMesaCreateContextExt(OSMESA_RGBA, 16, 0, 0, NULL);</span></span>
+<span class="line"><span>    if (!ctx)</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        fprintf(stderr, "OSMesaCreateContext failed\n");</span></span>
+<span class="line"><span>        return 1;</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    // 创建一个缓冲区</span></span>
+<span class="line"><span>    void *buffer = malloc(width * height * 4);</span></span>
+<span class="line"><span>    if (!buffer)</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        printf(stderr, "Buffer allocation failed\n");</span></span>
+<span class="line"><span>        OSMesaDestroyContext(ctx);</span></span>
+<span class="line"><span>        return 1;</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 创建一个缓冲区</span></span>
+<span class="line"><span>    void *buffer = malloc(width * height * 4);</span></span>
+<span class="line"><span>    if (!buffer)</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        fprintf(stderr, "Buffer allocation failed\n");</span></span>
+<span class="line"><span>        OSMesaDestroyContext(ctx);</span></span>
+<span class="line"><span>        return 1;</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 绑定上下文并将缓冲区绑定到上下文</span></span>
+<span class="line"><span>    OSMesaMakeCurrent(ctx, buffer, GL_UNSIGNED_BYTE, width, height);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 清除颜色缓冲区为红色</span></span>
+<span class="line"><span>    glClearColor(1.0, 0.0, 0.0, 1.0);</span></span>
+<span class="line"><span>    gLClear(GL_COLOR_BUFFER_BIT);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 将绘制结果保存到文件</span></span>
+<span class="line"><span>    FILE *f = fopen("output. rgba", "wb");</span></span>
+<span class="line"><span>    if (f)</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        fwrite(buffer, width * height * 4, 1, f);</span></span>
+<span class="line"><span>        fclose(f);</span></span>
+<span class="line"><span>        printf("Image saved to output.rgba\n");</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    else</span></span>
+<span class="line"><span>    {</span></span>
+<span class="line"><span>        fprintf(stderr, "Failed to open file for writing\n");</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 清理</span></span>
+<span class="line"><span>    OSMesaMakeCurrent((OSMesaContext) nullptr, nullptr, GL_UNSIGNED_BYTE, 0, 0);</span></span>
+<span class="line"><span>    free(buffer);</span></span>
+<span class="line"><span>    OSMesaDestroyContext(ctx);</span></span>
+<span class="line"><span>    return 0;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>这里我们创建了一块内存作为渲染缓冲区，渲染结果直接可以通过内存获取。当然，使用glReadPixels 读取结果也是一样的。</p>
+<h2 id="drm硬件加速">DRM硬件加速</h2>
+<p>如果你的服务部署在本地物理机并配置有显卡，或是配置了带GPU的ECS机器，那可以用DRM做硬件加速。DRM（Direct Rendering Manager）是Linux内核的一部分，用于管理图形显示的硬件加速以及图形上下文的切换。它的优点是可以不依赖图形窗口系统，直接与GPU通信，提高渲染性能。
+这个方案我们项目里没有实际应用，相关实现可以参考libMesa提供的demo：
+<a href="https://gitlab.freedesktop.org/mesa/demos/-/blob/main/src/egl/opengl/eglkms.c">https://gitlab.freedesktop.org/mesa/demos/-/blob/main/src/egl/opengl/eglkms.c</a></p> <div class="mt-8"> <h3 class="text-xl font-semibold mb-4">Category</h3> <div class="flex flex-wrap gap-2"> <a href="/category/code" class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded hover:bg-blue-200 transition-colors"> code </a> </div> </div><div class="mt-6"> <h3 class="text-xl font-semibold mb-4">Tags</h3> <div class="flex flex-wrap gap-2"> <a href="/tag/linux" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> Linux </a><a href="/tag/av" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> AV </a> </div> </div> </div> </div> </article> </main> <footer class="bg-gray-100 py-8 text-center text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+&copy; 2025 Aster Zhang. All rights reserved.
+<!-- <div class="flex justify-center space-x-4 mt-4">
+		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Mastodon</span>
+			<svg
+				viewBox="0 0 16 16"
+				aria-hidden="true"
+				width="32"
+				height="32"
+				astro-icon="social/mastodon"
+				><path
+					fill="currentColor"
+					d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"
+				></path></svg
+			>
+		</a>
+		<a href="https://twitter.com/astrodotbuild" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Twitter</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/twitter"
+				><path
+					fill="currentColor"
+					d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
+				></path></svg
+			>
+		</a>
+		<a href="https://github.com/withastro/astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Go to Astro's GitHub repo</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/github"
+				><path
+					fill="currentColor"
+					d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+				></path></svg
+			>
+		</a>
+	</div> --> </footer>  </body></html>

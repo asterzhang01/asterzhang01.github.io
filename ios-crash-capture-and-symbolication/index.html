@@ -1,0 +1,260 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-bvzihdzo> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aster Zhang" href="https://asterzhang01.github.io/rss.xml"><meta name="generator" content="Astro v5.12.8"><!-- Font preloads --><link rel="preload" href="/fonts/atkinson-regular.woff" as="font" type="font/woff" crossorigin><link rel="preload" href="/fonts/atkinson-bold.woff" as="font" type="font/woff" crossorigin><!-- Theme script --><script src="/js/theme.js"></script><!-- Canonical URL --><link rel="canonical" href="https://asterzhang01.github.io/ios-crash-capture-and-symbolication/"><!-- Primary Meta Tags --><title>iOS实现Crash捕获与堆栈符号化</title><meta name="title" content="iOS实现Crash捕获与堆栈符号化"><meta name="description"><link rel="stylesheet" href="/_astro/_slug_.CTQ2zI8_.css">
+<style>.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{border-radius:.5rem}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{margin-top:.5rem;display:block;text-align:center;font-size:.875rem;line-height:1.25rem;font-weight:400;font-style:normal;--tw-text-opacity: 1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}}.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo],.dark[data-astro-cid-bvzihdzo] .prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]+em[data-astro-cid-bvzihdzo]>strong[data-astro-cid-bvzihdzo]{--tw-text-opacity: 1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.prose[data-astro-cid-bvzihdzo] img[data-astro-cid-bvzihdzo]{height:auto;max-width:100%}.prose[data-astro-cid-bvzihdzo] p[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo] li[data-astro-cid-bvzihdzo]>img[data-astro-cid-bvzihdzo]{margin-left:auto;margin-right:auto}.prose[data-astro-cid-bvzihdzo]>[data-astro-cid-bvzihdzo]+[data-astro-cid-bvzihdzo]{margin-top:1rem}.prose[data-astro-cid-bvzihdzo]>h1[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h2[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>h3[data-astro-cid-bvzihdzo]{margin-top:2rem;margin-bottom:1rem}.prose[data-astro-cid-bvzihdzo]>ul[data-astro-cid-bvzihdzo],.prose[data-astro-cid-bvzihdzo]>ol[data-astro-cid-bvzihdzo]{padding-left:1.5rem}.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{border-left-width:4px;--tw-border-opacity: 1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1));padding-left:1rem;font-style:italic;--tw-text-opacity: 1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}@media (prefers-color-scheme: dark){.prose[data-astro-cid-bvzihdzo]>blockquote[data-astro-cid-bvzihdzo]{--tw-border-opacity: 1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1));--tw-text-opacity: 1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}}.prose[data-astro-cid-bvzihdzo] pre[data-astro-cid-bvzihdzo]{margin-top:1.5rem;margin-bottom:1.5rem}
+</style></head> <body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100" data-astro-cid-bvzihdzo> <header class="bg-white shadow-sm dark:bg-gray-800"> <nav class="container mx-auto px-4 py-3 flex items-center justify-between"> <h2 class="text-xl font-bold m-0"> <a href="/" class="no-underline text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">Aster Zhang</a> </h2> <div class="flex space-x-4"> <!-- <HeaderLink href="/">Home</HeaderLink> --> <a href="/category" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Category </a> <a href="/tag" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Tags </a> <a href="/archive" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> Archive </a> <a href="/about" class="px-3 py-2 rounded-md text-sm font-medium no-underline transition-colors text-gray-700 hover:bg-gray-100 hover:text-gray-900"> About </a> </div> <div class="flex items-center space-x-2"> <a href="https://github.com/asterzhang01" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"> <span class="sr-only">Go to Astro's GitHub repo</span> <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg> </a> </div> </nav> </header> <main class="max-w-3xl mx-auto px-4 py-8" data-astro-cid-bvzihdzo> <article class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden" data-astro-cid-bvzihdzo>  <div class="prose prose-lg dark:prose-invert max-w-none px-6 py-8 prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-base prose-a:text-blue-600 hover:prose-a:text-blue-800 dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300" data-astro-cid-bvzihdzo> <header class="mb-8" data-astro-cid-bvzihdzo> <div class="text-sm text-gray-500 dark:text-gray-400 mb-2" data-astro-cid-bvzihdzo> <time datetime="2018-08-30T13:09:00.000Z"> Aug 30, 2018 </time>  </div> <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4" data-astro-cid-bvzihdzo>iOS实现Crash捕获与堆栈符号化</h1>  </header> <hr class="my-6 border-gray-200 dark:border-gray-700" data-astro-cid-bvzihdzo> <div class="mt-8" data-astro-cid-bvzihdzo>  <p>在应用程序开发过程中，最棘手的问题莫过于crash。已经上线的crash无法看到崩溃现场，只能通过crash日志进行定位分析。通常情况下，可以使用苹果自带的crash log或者第三方的crash组件进行crash捕获。但是在一些场景下，需要我们手动实现crash捕获与符号化，比如开发SDK。</p>
+<h1 id="crash捕获">Crash捕获</h1>
+<p>iOS端的crash分为两类，一类是NSException异常，另外一类是Signal信号异常。这两类异常我们都可以通过注册相关函数来捕获，但是值得注意的是一个应用中如果注册了多个crash收集组件，必然会存在冲突问题。这个时候，我们需要在注册之前判断是否已经注册过handler，如果有注册过，需要把之前注册的handler函数指针保存，待处理完crash后，再把对应的handler抛出去。</p>
+<h2 id="1-nsexception异常捕获">1. NSException异常捕获</h2>
+<p>NSException异常是OC代码导致的crash，我们可以先调用NSGetUncaughtExceptionHandler获取之前注册的handler，如果有就保存起来，再通过NSSetUncaughtExceptionHandler方法注册自己的handler：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>void RegisterExceptionHandler() {</span></span>
+<span class="line"><span>    if(NSGetUncaughtExceptionHandler() != MyExceptionHandler) {</span></span>
+<span class="line"><span>        OldHandler = NSGetUncaughtExceptionHandler();</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    NSSetUncaughtExceptionHandler(&#x26;MyExceptionHandler);</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>处理完成后再调用保存的handler，抛出异常：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>void MyExceptionHandler(NSException *exception) {</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   // do something...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 调用之前已经注册的handler</span></span>
+<span class="line"><span>    if(OldHandler) {</span></span>
+<span class="line"><span>        OldHandler(exception);</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="2-signal信号捕获">2. Signal信号捕获</h2>
+<p>Signal信号是由iOS底层mach信号异常转换后以signal信号抛出的异常。既然是兼容posix标准的异常，我们同样可以通过sigaction函数注册对应的信号。
+因为signal信号有很多，有些信号在iOS应用中也不会产生，我们只需要注册常见的几类信号：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>SIGILL	4	非法指令	  执行了非法指令. 通常是因为可执行文件本身出现错误, 或者试图执行数据段. 堆栈溢出时也有可能产生这个信号.</span></span>
+<span class="line"><span>SIGABRT	6	调用abort    程序自己发现错误并调用abort时产生,一些C库函数中，如strlen</span></span>
+<span class="line"><span>SIGSFPE	8	浮点运算错误  如除0操作</span></span>
+<span class="line"><span>SIGSEGV	11	段非法错误	 试图访问未分配给自己的内存, 或试图往没有写权限的内存地址写数据,空指针，数组越界，栈溢出等</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>下面我们注册一个SIGABRT信号，在注册handler之前，需要保存之前注册的hander:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>void RegisterSignalHandler() {</span></span>
+<span class="line"><span>    struct sigaction old_action;</span></span>
+<span class="line"><span>    sigaction(SIGABRT, NULL, &#x26;old_action);</span></span>
+<span class="line"><span>    if (old_action.sa_flags &#x26; SA_SIGINFO) {</span></span>
+<span class="line"><span>        SignalHandlerFunc handler = (SignalHandlerFunc)old_action.sa_sigaction;</span></span>
+<span class="line"><span>        if (handler != MySignalHandler) {</span></span>
+<span class="line"><span>            // 保存OldAbrtSignalHandler</span></span>
+<span class="line"><span>            OldAbrtSignalHandler = handler;</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    // 注册MySignalHandler</span></span>
+<span class="line"><span>    struct sigaction action;</span></span>
+<span class="line"><span>    action.sa_sigaction = MySignalHandler;</span></span>
+<span class="line"><span>    action.sa_flags = SA_NODEFER | SA_SIGINFO;</span></span>
+<span class="line"><span>    sigemptyset(&#x26;action.sa_mask);</span></span>
+<span class="line"><span>    sigaction(signal, &#x26;action, 0);</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>处理完成后，同样抛出handler:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>static void MySignalHandler(int signal, siginfo_t* info, void* context) {</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    // do something...</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    // 处理前者注册的 handler</span></span>
+<span class="line"><span>    if (signal == SIGABRT) {</span></span>
+<span class="line"><span>        if (OldAbrtSignalHandler) {</span></span>
+<span class="line"><span>            OldAbrtSignalHandler(signal, info, context);</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h1 id="收集调用堆栈">收集调用堆栈</h1>
+<p>调用堆栈的收集我们可以利用系统api，也可以参考PLCrashRepoter等第三方实现获取所有线程堆栈。使用系统api关键代码如下:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>NSMutableString *text = [NSMutableString string];</span></span>
+<span class="line"><span>        void* callstack[128];</span></span>
+<span class="line"><span>        int i, frames = backtrace(callstack, 128);</span></span>
+<span class="line"><span>        char** strs = backtrace_symbols(callstack, frames);</span></span>
+<span class="line"><span>        for (i = 0; i &#x3C; frames; ++i) {</span></span>
+<span class="line"><span>            [text appendFormat:@"%@\n", [NSString stringWithCString:strs[i] encoding:NSUTF8StringEncoding]];</span></span>
+<span class="line"><span>        }</span></span></code></pre>
+<h1 id="堆栈符号化">堆栈符号化</h1>
+<p>通过系统api获取的堆栈信息可能只是一串内存地址，很难从中获取有用的信息协助排查问题，因此，需要对堆栈信息符号化。
+符号化的思路是找到当前应用对于的dsym符号表文件，利用dwarfdump，atos等工具还原crash堆栈内存地址对应的符号名。需要注意如果应用中使用了自己或第三方的动态库，应用崩溃在动态库Image而不是主程序Image中，我们需要有对应动态库的dsym符号表才能符号化。
+思路明确之后，接下来面临的是两个问题。一个问题是如何把当前crash的应用和dsym符号表对应上。另一个问题是如何通过内存地址符号化。在解决这两个问题之前，我们需要先了解可执行文件的二进制格式和加载过程。</p>
+<h2 id="1-mach-o文件格式">1. Mach-O文件格式</h2>
+<p>不同操作系统都会定义不同的可执行文件格式。如Linux平台的ELF格式，Windows平台的PE格式，iOS的可执行文件格式被称作Mach-O。可执行文件，动态库，dsym文件都是这种文件格式。
+下图是官方的Mach-O格式结构：
+<img alt="Mach-O文件格式" loading="lazy" decoding="async" fetchpriority="auto" width="365" height="401" src="/_astro/1240-20220108190223864.DeAKGSa5_2m97Gv.webp" >
+可以看到，Mach-O文件分为三部分。
+第一部分是header，hander定义了文件的基本信息，包括文件大小，文件类型，使用的平台等信息。我们可以从loader.h头文件中找到相关定义：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/*</span></span>
+<span class="line"><span> * The 64-bit mach header appears at the very beginning of object files for</span></span>
+<span class="line"><span> * 64-bit architectures.</span></span>
+<span class="line"><span> */</span></span>
+<span class="line"><span>struct mach_header_64 {</span></span>
+<span class="line"><span>    uint32_t    magic;      /* mach magic number identifier */</span></span>
+<span class="line"><span>    cpu_type_t  cputype;    /* cpu specifier */</span></span>
+<span class="line"><span>    cpu_subtype_t   cpusubtype; /* machine specifier */</span></span>
+<span class="line"><span>    uint32_t    filetype;   /* type of file */</span></span>
+<span class="line"><span>    uint32_t    ncmds;      /* number of load commands */</span></span>
+<span class="line"><span>    uint32_t    sizeofcmds; /* the size of all the load commands */</span></span>
+<span class="line"><span>    uint32_t    flags;      /* flags */</span></span>
+<span class="line"><span>    uint32_t    reserved;   /* reserved */</span></span>
+<span class="line"><span>};</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>其次是load commands，这一部分定义了详细的加载指令，指明如何加载到内存。从头文件定义可以看到，基础的load_command结构体只包含了cmd以及cmdsize，通过cmd类型，可以转义成不同类型的load command 结构体：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct load_command {</span></span>
+<span class="line"><span>	uint32_t cmd;		/* type of load command */</span></span>
+<span class="line"><span>	uint32_t cmdsize;	/* total size of command in bytes */</span></span>
+<span class="line"><span>};</span></span></code></pre>
+<p>最后的数据部分，包括了代码段，数据段，符号表等具体的二进制数据。
+我们可以用otool查看二进制文件的具体内容，更直观的，可以用Mach-O View来浏览可执行文件的具体内容。
+下图是一个可执行文件与其所对于的符号表文件。可执行文件的load command比较多，里面包含了有代码段，数据段，函数入口，加载动态库等指令。其中的LC_UUID字段和符号表中的LC_UUID是完全对应的，也就是说，可以通过UUID字段匹配可执行文件和dsym符号表。</p>
+<p><img alt="可执行文件" loading="lazy" decoding="async" fetchpriority="auto" width="1240" height="788" src="/_astro/1240-20220108190227482.CBmYe0ed_ZsxiO8.webp" ></p>
+<p><img alt="符号表文件" loading="lazy" decoding="async" fetchpriority="auto" width="1240" height="796" src="/_astro/1240-20220108190232502.C29bGeI1_2fMV0x.webp" ></p>
+<h2 id="2-可执行文件加载过程">2. 可执行文件加载过程</h2>
+<p>一个iOS应用的加载过程是这样的，首先，由内核加载可执行文件（Mach-O），并从中获得dyld的路径。然后加载dyld，由dyld接管动态库加载，符号绑定等工作，runtime的初始化工作也在这一阶段进行。最后dyld调用main函数，这样便来到了main函数入口。
+在这个过程中，操作系统为了安全考虑，使用了ASLR技术。地址空间布局随机化(Address space layout randomization)，就是每次应用加载时，使用随机的一个地址空间,这样能有效防止被攻击。VM Address是编译后Image的起始位置，Load Address是在运行时加载到虚拟内存的起始位置，Slide是加载到内存的偏移，这个偏移值是一个随机值，每次运行都不相同，有下面公式：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Load Address = VM Address + Slide</span></span></code></pre>
+<p>由于dsym符号表是编译时生成的地址，crash堆栈的地址是运行时地址，这个时候需要经过转换才能正确的符号化。 crash日志里的符号地址被称为Stack Address，而编译后的符号地址被称为Symbol Address，他们之间的关系如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Stack Address = Symbol Address + Slide</span></span></code></pre>
+<p>符号化就是通过Symbol Address到dsym文件中寻找对应符号信息的过程。</p>
+<h2 id="3-获取binary-images信息">3. 获取Binary Images信息</h2>
+<p>我们在demo的viewDidLoad方法中调用abort方法制造一个crash。仔细观察一下系统采集到的crash日志，报错地址Stack Address位于0x1046eea14，相对Load Address 0x1046e8000偏移了27156。这里的27156并不是ASLR的随机偏移Slide，而是符号相对位置offset(Symbol Address - VM Address)：
+<img alt="报错堆栈" loading="lazy" decoding="async" fetchpriority="auto" width="1240" height="395" src="/_astro/1240-20220108190236441.Cy0NErKC_fJYGu.webp" >
+再观察crash日志最后，有一栏Binary Images，记录了所有加载image的UUID和加载的Load Address：
+<img alt="Binary Images" loading="lazy" decoding="async" fetchpriority="auto" width="1240" height="251" src="/_astro/1240-20220108190239303.E-ocJ5Ep_ZMad6U.webp" >
+根据前文提到的UUID对应关系以及Load Address和Symbol Address的转换关系，只要能获取Binary Images信息，就可以实现符号化。
+UUID存放在Mach-O的load command中，对应uuid_command结构体的uuid字段，可以通过遍历所有load command获取。
+Slide偏移可以通过image_dyld_get_image_vmaddr_slide方法遍历所有Image获取。
+VM Address也存放在load command中，对应segment_command结构体的vmaddr字段，需要注意segment_command存在多种类型以及需要区分32位和64位应用的细微差别。
+解析代码如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>for (uint32_t i = 0; i &#x3C; _dyld_image_count(); i++) {</span></span>
+<span class="line"><span>        uint64_t vmbase = 0;</span></span>
+<span class="line"><span>        uint64_t vmslide = 0;</span></span>
+<span class="line"><span>        uint64_t vmsize = 0;</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        uint64_t loadAddress = 0;</span></span>
+<span class="line"><span>        uint64_t loadEndAddress = 0;</span></span>
+<span class="line"><span>        NSString *imageName = @"";</span></span>
+<span class="line"><span>        NSString *uuid;</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        const struct mach_header *header = _dyld_get_image_header(i);</span></span>
+<span class="line"><span>        const char *name = _dyld_get_image_name(i);</span></span>
+<span class="line"><span>        vmslide = (i);</span></span>
+<span class="line"><span>        imageName = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];</span></span>
+<span class="line"><span>        BOOL is64bit = header->magic == MH_MAGIC_64 || header->magic == MH_CIGAM_64;</span></span>
+<span class="line"><span>        uintptr_t cursor = (uintptr_t)header + (is64bit ? sizeof(struct mach_header_64) : sizeof(struct mach_header));</span></span>
+<span class="line"><span>        struct load_command *loadCommand = NULL;</span></span>
+<span class="line"><span>        for (uint32_t i = 0; i &#x3C; header->ncmds; i++, cursor += loadCommand->cmdsize) {</span></span>
+<span class="line"><span>            loadCommand = (struct load_command *)cursor;</span></span>
+<span class="line"><span>            if(loadCommand->cmd == LC_SEGMENT) {</span></span>
+<span class="line"><span>                const struct segment_command* segmentCommand = (struct segment_command*)loadCommand;</span></span>
+<span class="line"><span>                if (strcmp(segmentCommand->segname, SEG_TEXT) == 0) {</span></span>
+<span class="line"><span>                    vmsize = segmentCommand->vmsize;</span></span>
+<span class="line"><span>                    vmbase = segmentCommand->vmaddr;</span></span>
+<span class="line"><span>                }</span></span>
+<span class="line"><span>            } else if(loadCommand->cmd == LC_SEGMENT_64) {</span></span>
+<span class="line"><span>                const struct segment_command_64* segmentCommand = (struct segment_command_64*)loadCommand;</span></span>
+<span class="line"><span>                 if (strcmp(segmentCommand->segname, SEG_TEXT) == 0) {</span></span>
+<span class="line"><span>                    vmsize = segmentCommand->vmsize;</span></span>
+<span class="line"><span>                    vmbase = (uintptr_t)(segmentCommand->vmaddr);</span></span>
+<span class="line"><span>                }</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>            else if (loadCommand->cmd == LC_UUID) {</span></span>
+<span class="line"><span>                const struct uuid_command *uuidCommand = (const struct uuid_command *)loadCommand;</span></span>
+<span class="line"><span>                NSString *uuidString = [[[NSUUID alloc] initWithUUIDBytes:uuidCommand->uuid] UUIDString];</span></span>
+<span class="line"><span>                uuid = [[uuidString stringByReplacingOccurrencesOfString:@"-" withString:@""] lowercaseString];</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        loadAddress = vmbase + vmslide;</span></span>
+<span class="line"><span>        loadEndAddress = loadAddress + vmsize - 1;</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>  // do something...</span></span></code></pre>
+<h2 id="4-符号化">4. 符号化</h2>
+<p>通过上述代码，我们可以采集到和系统一样的crash日志。接下来，可以使用dwarfdump和atos进行符号化。</p>
+<h3 id="41-dwarfdump">4.1 dwarfdump</h3>
+<p>拿到crash日志后，我们要先确定dsym文件是否匹配。可以使用dwarfdump —uuid命令查看dsym文件所有架构的UUID:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ dwarfdump --uuid mytest.app.dSYM </span></span>
+<span class="line"><span>UUID: B4217D5B-0349-3D9F-9D70-BC7DD60DA121 (armv7) mytest.app.dSYM/Contents/Resources/DWARF/mytest</span></span>
+<span class="line"><span>UUID: A52E3452-C2EF-3291-AE37-9392EDCCE572 (arm64) mytest.app.dSYM/Contents/Resources/DWARF/mytest</span></span></code></pre>
+<p>可以看到dsym文件的arm64架构中包含的A52E3452-C2EF-3291-AE37-9392EDCCE572和Binary Images中的UUID是相匹配的。
+<img alt="UUID" loading="lazy" decoding="async" fetchpriority="auto" width="1240" height="263" src="/_astro/1240-20220108190244655.BcP9_3mW_dsxob.webp" >
+下面就可以用dwarfdump —lookup命令对报错堆栈符号化，格式如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>dwarfdump --arch [arch type] --lookup [Symbol Address] [dsym file path]</span></span></code></pre>
+<p>对于报错堆栈的Stack Address 0x1046eea14，需要进行一个转换。已知VM Address为0x100000000，Load Address为0x1046e8000，可以得到Slide为0x46e8000。通过公式Symbol Address = Stack Address - Slider求得Symbol Address为0x100006a14，输入命令：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ dwarfdump --arch arm64 --lookup 0x100006a14 mytest.app.dSYM </span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span> File: mytest.app.dSYM/Contents/Resources/DWARF/mytest (arm64)</span></span>
+<span class="line"><span>----------------------------------------------------------------------</span></span>
+<span class="line"><span>Looking up address: 0x0000000100006a14 in .debug_info... found!</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x0003ebb7: Compile Unit: length = 0x000000d4  version = 0x0004  abbr_offset = 0x00000000  addr_size = 0x08  (next CU at 0x0003ec8f)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x0003ebc2: TAG_compile_unit [120] *</span></span>
+<span class="line"><span>             AT_producer( "Apple LLVM version 9.1.0 (clang-902.0.39.2)" )</span></span>
+<span class="line"><span>             AT_language( DW_LANG_ObjC )</span></span>
+<span class="line"><span>             AT_name( "/Users/worthyzhang/Desktop/mytest/mytest/ViewController.m" )</span></span>
+<span class="line"><span>             AT_stmt_list( 0x00009151 )</span></span>
+<span class="line"><span>             AT_comp_dir( "/Users/worthyzhang/Desktop/mytest" )</span></span>
+<span class="line"><span>             AT_APPLE_optimized( true )</span></span>
+<span class="line"><span>             AT_APPLE_major_runtime_vers( 0x02 )</span></span>
+<span class="line"><span>             AT_low_pc( 0x00000001000069bc )</span></span>
+<span class="line"><span>             AT_high_pc( 0x000000a4 )</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>0x0003ebf9:     TAG_subprogram [122] *</span></span>
+<span class="line"><span>                 AT_low_pc( 0x00000001000069bc )</span></span>
+<span class="line"><span>                 AT_high_pc( 0x00000070 )</span></span>
+<span class="line"><span>                 AT_frame_base( reg29 )</span></span>
+<span class="line"><span>                 AT_object_pointer( {0x0003ec12} )</span></span>
+<span class="line"><span>                 AT_name( "-[ViewController viewDidLoad]" )</span></span>
+<span class="line"><span>                 AT_decl_file( "/Users/worthyzhang/Desktop/mytest/mytest/ViewController.m" )</span></span>
+<span class="line"><span>                 AT_decl_line( 17 )</span></span>
+<span class="line"><span>                 AT_prototyped( true )</span></span>
+<span class="line"><span>                 AT_APPLE_optimized( true )</span></span>
+<span class="line"><span>Line table dir : '/Users/worthyzhang/Desktop/mytest/mytest'</span></span>
+<span class="line"><span>Line table file: 'ViewController.m' line 25, column 1 with start address 0x0000000100006a14</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Looking up address: 0x0000000100006a14 in .debug_frame... not found.mp</span></span></code></pre>
+<p>可以定位到报错所在的函数名[ViewController viewDidLoad]以及文件名，行号等信息。</p>
+<h3 id="42-atos">4.2 atos</h3>
+<p>如果只是简单的获取符号名，可以用atos来符号化，命令格式如下：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>atos -o [dsym file path] -l [Load Address] -arch [arch type] [Stack Address]</span></span></code></pre>
+<p>需要注意这里的dsym file path是dsym文件而不是.dSYM结尾的文件夹，输入命令：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ atos -o mytest.app.dSYM/Contents/Resources/DWARF/mytest -l 0x1046e8000 --arch arm64 0x1046eea14</span></span>
+<span class="line"><span>-[ViewController viewDidLoad] (in mytest) (ViewController.m:25)</span></span></code></pre>
+<p>得到结果和dwarfdump是一致的。</p>
+<p>参考资料：
+<a href="https://www.objc.io/issues/6-build-tools/mach-o-executables/">Mach-O Executables</a>
+<a href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/MachOTopics/0-Introduction/introduction.html#//apple_ref/doc/uid/TP40001827-SW1">Mach-O Programming Topics</a>
+<a href="https://nianxi.net/ios/ios-crash-reporter.html">漫谈iOS Crash收集框架</a>
+<a href="https://www.jianshu.com/p/953f0961157a">iOS崩溃堆栈信息的符号化解析</a></p> <div class="mt-8"> <h3 class="text-xl font-semibold mb-4">Category</h3> <div class="flex flex-wrap gap-2"> <a href="/category/code" class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded hover:bg-blue-200 transition-colors"> code </a> </div> </div><div class="mt-6"> <h3 class="text-xl font-semibold mb-4">Tags</h3> <div class="flex flex-wrap gap-2"> <a href="/tag/ios" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> iOS </a> </div> </div> </div> </div> </article> </main> <footer class="bg-gray-100 py-8 text-center text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+&copy; 2025 Aster Zhang. All rights reserved.
+<!-- <div class="flex justify-center space-x-4 mt-4">
+		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Mastodon</span>
+			<svg
+				viewBox="0 0 16 16"
+				aria-hidden="true"
+				width="32"
+				height="32"
+				astro-icon="social/mastodon"
+				><path
+					fill="currentColor"
+					d="M11.19 12.195c2.016-.24 3.77-1.475 3.99-2.603.348-1.778.32-4.339.32-4.339 0-3.47-2.286-4.488-2.286-4.488C12.062.238 10.083.017 8.027 0h-.05C5.92.017 3.942.238 2.79.765c0 0-2.285 1.017-2.285 4.488l-.002.662c-.004.64-.007 1.35.011 2.091.083 3.394.626 6.74 3.78 7.57 1.454.383 2.703.463 3.709.408 1.823-.1 2.847-.647 2.847-.647l-.06-1.317s-1.303.41-2.767.36c-1.45-.05-2.98-.156-3.215-1.928a3.614 3.614 0 0 1-.033-.496s1.424.346 3.228.428c1.103.05 2.137-.064 3.188-.189zm1.613-2.47H11.13v-4.08c0-.859-.364-1.295-1.091-1.295-.804 0-1.207.517-1.207 1.541v2.233H7.168V5.89c0-1.024-.403-1.541-1.207-1.541-.727 0-1.091.436-1.091 1.296v4.079H3.197V5.522c0-.859.22-1.541.66-2.046.456-.505 1.052-.764 1.793-.764.856 0 1.504.328 1.933.983L8 4.39l.417-.695c.429-.655 1.077-.983 1.934-.983.74 0 1.336.259 1.791.764.442.505.661 1.187.661 2.046v4.203z"
+				></path></svg
+			>
+		</a>
+		<a href="https://twitter.com/astrodotbuild" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Follow Astro on Twitter</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/twitter"
+				><path
+					fill="currentColor"
+					d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
+				></path></svg
+			>
+		</a>
+		<a href="https://github.com/withastro/astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+			<span class="sr-only">Go to Astro's GitHub repo</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" astro-icon="social/github"
+				><path
+					fill="currentColor"
+					d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+				></path></svg
+			>
+		</a>
+	</div> --> </footer>  </body></html>
