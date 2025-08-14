@@ -18,18 +18,23 @@ var _hmt = _hmt || [];
 <p>前置条件是我们需要将光猫改为桥接模式，这样可以方便使用我们的路由器配置IPv6。这里不赘述，有需要后面单独出一期教程。</p>
 <h1 id="路由器配置">路由器配置</h1>
 <p>第二步，需要在路由器上更改防火墙设置，允许IPv6公网访问。这里我以华硕路由器为例，其他路由器的设置也是大同小异。
-登陆路由器控制台页面，找到高级设置-防火墙。这个页面有IPv4和IPv6两个设置，因为我们没有公网IPv4，可以直接忽略，只配置IPv6即可。</p>
-<p>基本设置这一栏，强烈建议选择启动IPv6防火墙，因为需要尽可能保证安全减少风险，只将需要的服务端口暴露在公网。
+登陆路由器控制台页面，找到高级设置-防火墙。这个页面有IPv4和IPv6两个设置，因为我们没有公网IPv4，可以直接忽略，只配置IPv6即可。
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="1280" height="756" src="/_astro/xhs5.DCnBMVRO_Z1PEROK.webp" >
+基本设置这一栏，强烈建议选择启动IPv6防火墙，因为需要尽可能保证安全减少风险，只将需要的服务端口暴露在公网。
 在传入防火墙规则这一栏，我们需要增加一列配置。可以理解为白名单，允许特定规则的访问。
 服务名可以任意填写，Remote IP可以不填，不填意味着任意IP都可以访问。
 本地IP这一段很重要，声明了可以允许访问哪些本地IP地址。我这里填写的是一个子网段**::2e0:67ff:fe04:b38e/::ffff:ffff:ffff:ffff**，意思是允许本地以2e0:67ff:fe04:b38e结束的所有IPv6地址访问。之所以要这么设置，是因为公网IPv6也是动态IP，其部分网段可能会变化。至于后半段IPv6地址，我们可以在群晖控制台查看获取。
 端口号我这里设置的是5001，是群晖web服务的端口号，通信协议选择tcp。设置完成后，点击+号，并应用本页面设置。</p>
 <h1 id="ddns配置">DDNS配置</h1>
-<p>我们的技术方案是通过域名绑定IPv6地址实现公网访问，所以域名是必不可少的。我是在阿里云购买的域名，就以阿里云控制台的操作为例。登陆阿里云控制台，右上角点击用户名，选择AccessKey，创建一对AccessKeyID和AccessKeySecret。</p>
-<p>回到NAS，套件中心下载DDNS-GO。如果你搜不到，是因为没配置套件来源，我的NAS上配置的是(我不是矿神)[<a href="https://spk7.imnks.com%5D%E3%80%82">https://spk7.imnks.com]。</a>
+<p>我们的技术方案是通过域名绑定IPv6地址实现公网访问，所以域名是必不可少的。我是在阿里云购买的域名，就以阿里云控制台的操作为例。登陆阿里云控制台，右上角点击用户名，选择AccessKey，创建一对AccessKeyID和AccessKeySecret。
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="638" height="566" src="/_astro/xhs4.CPUdxsDI_18bWSD.webp" >
+回到NAS，套件中心下载DDNS-GO。如果你搜不到，是因为没配置套件来源，我的NAS上配置的是(我不是矿神)[<a href="https://spk7.imnks.com%5D%E3%80%82">https://spk7.imnks.com]。</a>
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="1112" height="1080" src="/_astro/xhs3.DbAGR_kC_ZaksPQ.webp" >
 在配置页面选择DNS服务商为阿里云，并输入刚才创建的AccessKeyID和AccessKeySecret。
-第四步，选择开启IPv6，获取IP方式选择通过网卡获取，Domains填写我们购买的域名，设置完成并保存。</p>
-<p>这样一通配置完成后，不出意外的话，就实现NAS公网访问了。当然，大概率还是会遇到各种意外，但这也是折腾的乐趣所在。虽然稍显麻烦，但是经过我一年左右的使用，稳定性还是很不错的。</p> <div class="mt-8"> <h3 class="text-xl font-semibold mb-4">Category</h3> <div class="flex flex-wrap gap-2"> <a href="/category/app" class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded hover:bg-blue-200 transition-colors"> app </a> </div> </div><div class="mt-6"> <h3 class="text-xl font-semibold mb-4">Tags</h3> <div class="flex flex-wrap gap-2"> <a href="/tag/nas" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> NAS </a><a href="/tag/ddns" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> DDNS </a> </div> </div> </div> </div> </article> </main> <footer class="bg-gray-100 py-8 text-center text-gray-600 dark:bg-gray-800 dark:text-gray-300">
+第四步，选择开启IPv6，获取IP方式选择通过网卡获取，Domains填写我们购买的域名，设置完成并保存。
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="1280" height="687" src="/_astro/xhs2.D2ldVaor_Z2lGLXG.webp" >
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="1280" height="876" src="/_astro/xhs1.CrFT4Vbt_ZP8h1G.webp" >
+这样一通配置完成后，不出意外的话，就实现NAS公网访问了。当然，大概率还是会遇到各种意外，但这也是折腾的乐趣所在。虽然稍显麻烦，但是经过我一年左右的使用，稳定性还是很不错的。</p> <div class="mt-8"> <h3 class="text-xl font-semibold mb-4">Category</h3> <div class="flex flex-wrap gap-2"> <a href="/category/app" class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded hover:bg-blue-200 transition-colors"> app </a> </div> </div><div class="mt-6"> <h3 class="text-xl font-semibold mb-4">Tags</h3> <div class="flex flex-wrap gap-2"> <a href="/tag/nas" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> NAS </a><a href="/tag/ddns" class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded hover:bg-purple-200 transition-colors"> DDNS </a> </div> </div> </div> </div> </article> </main> <footer class="bg-gray-100 py-8 text-center text-gray-600 dark:bg-gray-800 dark:text-gray-300">
 &copy; 2025 Aster Zhang. All rights reserved.
 <!-- <div class="flex justify-center space-x-4 mt-4">
 		<a href="https://m.webtoo.ls/@astro" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
