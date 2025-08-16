@@ -21,7 +21,7 @@ var _hmt = _hmt || [];
 <h2 id="ddns配置">DDNS配置</h2>
 <p>DDNS配置需要有一个自己的域名，我的域名是在阿里云买的。这里主要介绍阿里云域名的DDNS配置，其他服务商的配置也是类似的。首先在控制面板上找到设备连接-远程访问，勾选启用DDNS支持：</p>
 <p><img  loading="lazy" decoding="async" fetchpriority="auto" width="1996" height="898" src="/_astro/Pasted_image_20250816180648.D-rMuTfQ_1l85Qi.webp" >
-新增编辑DDNS，服务商选择阿里云，域名建议使用二级域名，我这里用的通配符*，因为后面要用nginx做反代。下面的AKSK需要在阿里云的控制台配置，注意不要泄漏，IPv4和IPv6都选自动。这里要提一下，虽然IPv4是没用的（因为没有公网IPv4），但还是要加上去，否则可能会导致域名无法访问。
+新增编辑DDNS，服务商选择阿里云，域名建议使用二级域名，我这里用的通配符*.nas.xxx.com，因为后面要用nginx做反代。下面的AKSK需要在阿里云的控制台配置，注意不要泄漏，IPv4和IPv6都选自动。这里要提一下，虽然IPv4是没用的（因为没有公网IPv4），但还是要加上去，否则可能会导致域名无法访问。
 <img  loading="lazy" decoding="async" fetchpriority="auto" width="1982" height="1256" src="/_astro/Clipboard-20250816-211806.Cx-b8Erb_Z1aSsyG.webp" >
 配置完成后点击连接测试，没问题点击应用就算配置完成了。</p>
 <h2 id="反向代理">反向代理</h2>
