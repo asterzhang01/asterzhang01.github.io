@@ -22,7 +22,7 @@ var _hmt = _hmt || [];
 <p>DDNS配置需要有一个自己的域名，我的域名是在阿里云买的。这里主要介绍阿里云域名的DDNS配置，其他服务商的配置也是类似的。首先在控制面板上找到设备连接-远程访问，勾选启用DDNS支持：</p>
 <p><img  loading="lazy" decoding="async" fetchpriority="auto" width="1996" height="898" src="/_astro/Pasted_image_20250816180648.D-rMuTfQ_1l85Qi.webp" >
 新增编辑DDNS，服务商选择阿里云，域名建议使用二级域名，我这里用的通配符*，因为后面要用nginx做反代。下面的AKSK需要在阿里云的控制台配置，注意不要泄漏，IPv4和IPv6都选自动。这里要提一下，虽然IPv4是没用的（因为没有公网IPv4），但还是要加上去，否则可能会导致域名无法访问。
-<img  loading="lazy" decoding="async" fetchpriority="auto" width="1676" height="1024" src="/_astro/Pasted_image_20250816180802.CGMbawPW_G5HVe.webp" >
+<img  loading="lazy" decoding="async" fetchpriority="auto" width="1982" height="1256" src="/_astro/Clipboard-20250816-211806.Cx-b8Erb_Z1aSsyG.webp" >
 配置完成后点击连接测试，没问题点击应用就算配置完成了。</p>
 <h2 id="反向代理">反向代理</h2>
 <p>现在我们的NAS可以公网访问了，但是公网直接走http无异于大街上裸奔。理想的做法是开启ipv6防火墙，只开放特定端口的https的方向代理。
@@ -41,7 +41,7 @@ npm通过docker安装，我们先在NAS里安装好docker。之后在镜像中�
 <img  loading="lazy" decoding="async" fetchpriority="auto" width="1072" height="1172" src="/_astro/Pasted_image_20250816192935.4MKrTY7Y_Z1kChEE.webp" >
 证书选择我们之前申请的通配符证书，开启SSL和HTTP/2：
 <img  loading="lazy" decoding="async" fetchpriority="auto" width="1052" height="822" src="/_astro/Pasted_image_20250816193005.DbSC_CfU_aGjK4.webp" >
-到此，反向代理就配置完成了。打开浏览器，输入<a href="https://webdav.nas.xxx.com:8000%EF%BC%8C%E5%A6%82%E6%9E%9C%E8%83%BD%E8%B7%B3%E8%BD%AC%E5%88%B0webdav%E9%A1%B5%EF%BC%8C%E5%B0%B1%E7%AE%97%E6%88%90%E5%8A%9F%E4%BA%86%E3%80%82">https://webdav.nas.xxx.com:8000，如果能跳转到webdav页，就算成功了。</a></p>
+到此，反向代理就配置完成了。打开浏览器，输入<u><a href="https://webdav.nas.xxx.com:8000">https://webdav.nas.xxx.com:8000</a></u>，如果能跳转到webdav页，就算成功了。</p>
 <h2 id="防火墙设置">防火墙设置</h2>
 <p>最后，别忘了还要把防火墙打开。防火墙规则可以在家里的路由器上设置，也可以在NAS上设置。建议最好在路由器上设，这样可以保护局域网中的其他设备。这里提供NAS上的配置参考：</p>
 <p><img  loading="lazy" decoding="async" fetchpriority="auto" width="1972" height="1244" src="/_astro/Clipboard-20250816-205253.CUrk62Vn_2utBDf.webp" >
